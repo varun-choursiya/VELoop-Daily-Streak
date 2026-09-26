@@ -16,3 +16,14 @@ api.interceptors.request.use((config) => {
 });
 
 export default api;
+
+
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      localStorage.removeItem("veloop_token");
+    }
+    return Promise.reject(error);
+  }
+);

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   ArrowLeft,
   Check,
@@ -13,10 +13,23 @@ import {
   Trophy,
   WalletCards
 } from "lucide-react";
+
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { getHistory, getStreak, getWallet, claimStreak } from "../../services/streakApi.js";
 import styles from "./DailyStreak.module.css";
+import biggerStreak from "../../assets/Bigger_Streak.png";
+import day4Asset from "../../assets/Day-4.png";
+import day5Asset from "../../assets/Day-5.png";
+import day7Asset from "../../assets/Day-7.png";
+import exclusiveReward from "../../assets/Exclusive-reward.png";
+import flameAsset from "../../assets/Flame.png";
+import mobileHero from "../../assets/Mobile_Hero.png";
+import stayActive from "../../assets/Stay_Active.png";
+import topLeftAsset from "../../assets/Top_Left.png";
+import topRightAsset from "../../assets/Top_right.png";
+import trustAsset from "../../assets/Trust.png";
+import vesCoin from "../../assets/VEs_Coin.png";
 
 function formatReward(reward) {
   if (!reward) return "—";
@@ -149,6 +162,8 @@ export default function DailyStreakPage() {
     navigate("/login");
   }
 
+  const handleTimerDone = useCallback(() => load({ quiet: true }), [load]);
+
   if (loading) {
     return (
       <div className={styles.page}>
@@ -184,11 +199,11 @@ export default function DailyStreakPage() {
   const completed = data.streak.status === "COMPLETED";
   const progress = Math.min(100, (data.streak.checkedIn / data.streak.totalRewards) * 100);
   const displayUser = data.user || user;
-  const handleTimerDone = useCallback(() => load({ quiet: true }), [load]);
-
   return (
     <div className={styles.page}>
       <div className={styles.backgroundGlow} />
+      <img className={styles.topLeftArt} src={topLeftAsset} alt="" aria-hidden="true" />
+      <img className={styles.topRightArt} src={topRightAsset} alt="" aria-hidden="true" />
 
       <header className={styles.header}>
         <div className="container d-flex align-items-center justify-content-between gap-3">
@@ -199,11 +214,11 @@ export default function DailyStreakPage() {
 
           <div className={styles.headerRight}>
             <div className={styles.walletPill} title="Backend wallet balance">
-              <WalletCards size={15} />
+              <img src={vesCoin} alt="VES" />
               <span>{wallet?.vesBalance ?? 0} VES</span>
             </div>
             <div className={styles.streakPill}>
-              <Sparkles size={15} />
+              <img src={flameAsset} alt="" aria-hidden="true" />
               {data.streak.currentStreak} Day Streak
             </div>
             <div className={styles.userMeta}>
@@ -237,7 +252,12 @@ export default function DailyStreakPage() {
 
         <section className={styles.hero}>
           <div className={styles.heroCopy}>
-            <div className={styles.heroOrb} />
+            <div className={styles.heroArt}>
+              <picture>
+                <source media="(max-width: 600px)" srcSet={mobileHero} />
+                <img src={biggerStreak} alt="Daily streak rewards" />
+              </picture>
+            </div>
             <p className="eyebrow">DAILY CHECK-IN • VELoop REWARDS</p>
             <h1>Keep your streak.<br /><span>Unlock more.</span></h1>
             <p className={styles.heroText}>
@@ -287,7 +307,7 @@ export default function DailyStreakPage() {
           <div className={styles.ultimate}>
             <div className={styles.ultimateHalo} />
             <div className={styles.ultimateIcon}>
-              <Trophy size={58} />
+              <img src={day7Asset} alt="Day 7 ultimate reward" />
             </div>
             <span className={styles.dayBadge}>DAY {data.ultimateReward?.day}</span>
             <p>ULTIMATE REWARD</p>
@@ -315,11 +335,9 @@ export default function DailyStreakPage() {
           {data.rewards.map((reward) => (
             <article
               key={reward.day}
-              className={`${styles.rewardCard} ${
-                reward.status === "AVAILABLE" ? styles.available : ""
-              } ${reward.status === "CLAIMED" ? styles.claimed : ""} ${
-                reward.status === "MISSED" ? styles.missed : ""
-              }`}
+              className={`${styles.rewardCard} ${reward.status === "AVAILABLE" ? styles.available : ""
+                } ${reward.status === "CLAIMED" ? styles.claimed : ""} ${reward.status === "MISSED" ? styles.missed : ""
+                } ${reward.day === 7 ? styles.daySeven : ""}`}
             >
               <div className={styles.cardTop}>
                 <span className={styles.dayBadge}>DAY {reward.day}</span>
@@ -328,12 +346,14 @@ export default function DailyStreakPage() {
               </div>
 
               <div className={styles.rewardIcon}>
-                {reward.reward.assetType === "gift-card" ? (
-                  <Gift size={44} />
-                ) : reward.reward.assetType === "crown" ? (
-                  <Trophy size={44} />
+                {reward.day === 4 ? (
+                  <img src={day4Asset} alt="Day 4 gift card reward" />
+                ) : reward.day === 5 ? (
+                  <img src={day5Asset} alt="Day 5 gift card reward" />
+                ) : reward.day === 7 ? (
+                  <img src={day7Asset} alt="Day 7 crown reward" />
                 ) : (
-                  <Sparkles size={44} />
+                  <img src={vesCoin} alt="VES reward" />
                 )}
               </div>
 
@@ -378,9 +398,18 @@ export default function DailyStreakPage() {
         </section>
 
         <section className={styles.infoGrid}>
-          <div><Sparkles size={22} /><span><strong>Bigger Streak</strong>More consecutive check-ins unlock more valuable rewards.</span></div>
-          <div><Gift size={22} /><span><strong>Exclusive Rewards</strong>Earn VES and gift-card rewards through the backend wallet.</span></div>
-          <div><ShieldCheck size={22} /><span><strong>Protected Claims</strong>Day, reward and eligibility are validated server-side.</span></div>
+          <div>
+            <img src={stayActive} alt="Stay active" />
+            <span><strong>Stay Active</strong>Keep checking in consecutively to unlock the next reward.</span>
+          </div>
+          <div>
+            <img src={exclusiveReward} alt="Exclusive rewards" />
+            <span><strong>Exclusive Rewards</strong>Earn VES and gift-card rewards through the backend wallet.</span>
+          </div>
+          <div>
+            <img src={trustAsset} alt="Secure rewards" />
+            <span><strong>Protected Claims</strong>Day, reward and eligibility are validated server-side.</span>
+          </div>
         </section>
 
         <section className={styles.historySection}>
@@ -424,8 +453,19 @@ export default function DailyStreakPage() {
 
       <footer className={styles.footer}>
         <div className="container">
-          <span>© VELoop Rewards</span>
-          <span>Secure daily rewards experience</span>
+          <div className={styles.footerBrand}>
+            <img
+              src={trustAsset}
+              alt="VELoop Rewards"
+            />
+            <span>© VELoop Rewards</span>
+          </div>
+
+          <span>
+            Secure daily rewards experience
+            <br />
+            Secure &amp; Verified • Rewards are securely processed through VELoop.
+          </span>
         </div>
       </footer>
     </div>
