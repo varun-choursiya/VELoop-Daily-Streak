@@ -116,6 +116,10 @@ export async function getStreakStatus(userId, options = {}) {
     .session(session)
     .lean();
 
+  const wallet = await Wallet.findOne({ userId })
+    .session(session)
+    .lean();
+
   const claims = await StreakClaim.find({
     userId,
     cycleId: cycle._id,
@@ -176,6 +180,10 @@ export async function getStreakStatus(userId, options = {}) {
   return {
     success: true,
     serverTime: now.toISOString(),
+    wallet: {
+      vesBalance: wallet?.vesBalance ?? 0,
+      amazonGiftCardBalanceInr: wallet?.amazonGiftCardBalanceInr ?? 0
+    },
     streak: {
       currentStreak: cycle.currentStreak,
       currentDay: cycle.currentDay,
@@ -188,25 +196,25 @@ export async function getStreakStatus(userId, options = {}) {
     },
     nextReward: nextReward
       ? {
-        day: nextReward.day,
-        type: nextReward.rewardType,
-        currency: nextReward.currency,
-        amount: nextReward.amount,
-        title: nextReward.title,
-        subtitle: nextReward.subtitle,
-        assetType: nextReward.assetType
-      }
+          day: nextReward.day,
+          type: nextReward.rewardType,
+          currency: nextReward.currency,
+          amount: nextReward.amount,
+          title: nextReward.title,
+          subtitle: nextReward.subtitle,
+          assetType: nextReward.assetType
+        }
       : null,
     ultimateReward: ultimateReward
       ? {
-        day: ultimateReward.day,
-        type: ultimateReward.rewardType,
-        currency: ultimateReward.currency,
-        amount: ultimateReward.amount,
-        title: ultimateReward.title,
-        subtitle: ultimateReward.subtitle,
-        assetType: ultimateReward.assetType
-      }
+          day: ultimateReward.day,
+          type: ultimateReward.rewardType,
+          currency: ultimateReward.currency,
+          amount: ultimateReward.amount,
+          title: ultimateReward.title,
+          subtitle: ultimateReward.subtitle,
+          assetType: ultimateReward.assetType
+        }
       : null,
     rewards: cards
   };
@@ -384,7 +392,7 @@ export async function claimCurrentReward(userId, options = {}) {
         );
         cycle.windowExpiresAt = new Date(
           cycle.nextClaimAt.getTime() +
-          config.claimWindowHours * 60 * 60 * 1000
+            config.claimWindowHours * 60 * 60 * 1000
         );
       }
 

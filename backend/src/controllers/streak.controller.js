@@ -3,7 +3,13 @@ import { claimCurrentReward, getHistory, getStreakStatus } from "../services/str
 export async function getStreakController(req, res, next) {
   try {
     const data = await getStreakStatus(req.user._id);
-    res.json(data);
+    res.json({
+      ...data,
+      user: {
+        name: req.user.name,
+        email: req.user.email
+      }
+    });
   } catch (error) {
     next(error);
   }
@@ -12,7 +18,13 @@ export async function getStreakController(req, res, next) {
 export async function getStatusController(req, res, next) {
   try {
     const data = await getStreakStatus(req.user._id);
-    res.json(data);
+    res.json({
+      ...data,
+      user: {
+        name: req.user.name,
+        email: req.user.email
+      }
+    });
   } catch (error) {
     next(error);
   }
