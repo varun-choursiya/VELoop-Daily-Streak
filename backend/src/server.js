@@ -13,14 +13,30 @@ import { errorHandler } from "./middleware/error.middleware.js";
 
 const app = express();
 
+// Trust reverse proxy headers (Render, Railway, Fly.io, Heroku, Cloudflare, etc.)
+app.set("trust proxy", 1);
+
 app.use(helmet());
+
+const allowedOrigins = (process.env.CLIENT_URL || "http://localhost:5173")
+  .split(",")
+  .map((origin) => origin.trim().replace(/\/$/, ""));
+
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || "http://localhost:5173"
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error(`Origin ${origin} not allowed by CORS`));
+      }
+    },
+    credentials: true
   })
 );
 app.use(express.json({ limit: "20kb" }));
 app.use(morgan("dev"));
+
 
 const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
