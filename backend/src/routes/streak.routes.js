@@ -1,4 +1,5 @@
 import { Router } from "express";
+import rateLimit from "express-rate-limit";
 import { requireAuth } from "../middleware/auth.middleware.js";
 import {
   claimController,
@@ -9,14 +10,27 @@ import {
 
 const router = Router();
 
-function requireEmptyClaimBody(req, res, next) {
-  const keys = req.body && typeof req.body === "object" ? Object.keys(req.body) : [];
+const claimLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  limit: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    success: false,
+    code: "TOO_MANY_REQUESTS",
+    message: "Too many claim attempts. Please wait a minute before trying again."
+  }
+});
 
-  if (keys.length > 0) {
+function requireEmptyClaimBody(req, res, next) {
+  const bodyKeys = req.body && typeof req.body === "object" ? Object.keys(req.body) : [];
+  const queryKeys = req.query && typeof req.query === "object" ? Object.keys(req.query) : [];
+
+  if (bodyKeys.length > 0 || queryKeys.length > 0) {
     return res.status(400).json({
       success: false,
       code: "UNTRUSTED_CLAIM_INPUT",
-      message: "Claim day, reward and user identity are controlled by the server."
+      message: "Claim day, reward and user identity are strictly controlled by the server."
     });
   }
 
@@ -26,7 +40,8 @@ function requireEmptyClaimBody(req, res, next) {
 router.use(requireAuth);
 router.get("/", getStreakController);
 router.get("/status", getStatusController);
-router.post("/claim", requireEmptyClaimBody, claimController);
+router.post("/claim", claimLimiter, requireEmptyClaimBody, claimController);
 router.get("/history", historyController);
 
 export default router;
+

@@ -1,49 +1,52 @@
 # Security & Business-Rule Notes
 
-## Source of truth
+## Source of Truth & Inspect Mode Protection
 
-React controls presentation only. The backend controls user identity, streak state, current day, eligibility, reward configuration, claim status, unlock timestamps, missed-day detection, reset behavior and wallet credits.
+React and the browser DOM control presentation only. A user cannot bypass rules or claim rewards through DevTools ("Inspect Element" or JavaScript console):
+- **No Client Authority**: The claim endpoint (`POST /api/daily-streak/claim`) does not accept `day`, `reward`, `amount`, `currency`, or `userId` from the client.
+- **Payload Strictness**: Any claim request with a body or query parameters receives `400 UNTRUSTED_CLAIM_INPUT`.
+- **Server-Driven Calculation**: Current day, reward amount, unlock timestamps, and eligibility are retrieved directly from MongoDB.
+- **Server Clock Authority**: The frontend countdown is cosmetic only. Changing system time or manipulating countdown timers does not unlock rewards because the backend evaluates eligibility against the authoritative server timestamp.
+- **Local State Tampering Resistance**: Modifying React component state, local storage, or DOM attributes (such as removing `disabled` from buttons) simply triggers an API call that the backend rejects with `409 STREAK_LOCKED` or `409 ALREADY_CLAIMED`.
 
-## Authentication
+## JWT & Authentication Security
 
-Daily Streak and wallet routes require a Bearer JWT. The authenticated user is derived from the JWT subject and loaded from MongoDB. Client-provided `userId` is not accepted for ownership.
+- **Cryptographic Binding**: All authenticated routes require a `Bearer <token>` signed with HMAC-SHA256 (`HS256`).
+- **Algorithm Enforcement**: The authentication middleware explicitly enforces `{ algorithms: ["HS256"] }` in `jwt.verify` to eliminate algorithm confusion attacks.
+- **Subject Validation**: The token `sub` is strictly validated as a valid MongoDB ObjectId before querying the database.
+- **Clear Expiry Distinction**: Tokens that have expired return `AUTH_EXPIRED` so clients can re-authenticate cleanly.
+- **Secret Hygiene**: The server verifies that `JWT_SECRET` is defined at boot and issues warnings if it is under 32 characters (256 bits).
+- **Anti-Timing Attack**: The login service utilizes constant-time comparison against a dummy bcrypt hash when an email does not exist, eliminating timing-based user enumeration.
 
-## Claim API
+## Rate Limiting & Abuse Prevention
 
-`POST /api/daily-streak/claim` intentionally accepts an empty JSON object only. Day, reward, currency and user identity are not accepted from the client. Any non-empty claim payload receives `UNTRUSTED_CLAIM_INPUT`.
+- **Global API Limiter**: 300 requests per 15-minute window for standard navigation and reads.
+- **Auth Endpoint Limiter**: 15 requests per 15-minute window on `/api/auth/login` and `/api/auth/register` to block brute-force attacks and automated registration spam.
+- **Claim Endpoint Limiter**: 10 requests per minute on `/api/daily-streak/claim` to prevent transaction storming and database log flooding.
 
-## Duplicate and concurrency protection
+## Duplicate and Concurrency Protection
 
 `StreakClaim` has a unique compound index on:
 
 `userId + cycleId + day`
 
-The wallet update, wallet transaction, claim creation, cycle update and success audit are executed in a MongoDB transaction. Duplicate/concurrent attempts are converted to a safe conflict response rather than a second wallet credit.
+The wallet balance update, wallet transaction, claim creation, cycle update, and audit log entries are executed within a MongoDB multi-document transaction (`session.withTransaction`). Concurrent requests are serialized, and duplicate attempts trigger a clean conflict rollback (`ALREADY_CLAIMED`).
 
-## Server time
+## Missed-Day Reset
 
-The backend creates `serverTime` and `nextClaimAt`. The frontend countdown is display-only. Reaching zero triggers a fresh backend status request; the UI never grants eligibility locally.
-
-## Missed-day reset
-
-The current implementation documents an explicit interpretation of the brief:
-
+The business rules enforce:
 - `claimIntervalHours = 24`
 - `claimWindowHours = 24`
 - `resetOnMissedDay = true`
 
-This means the next reward unlocks 24 hours after the previous successful claim and remains claimable for the following 24 hours. A later request after the window resets the cycle.
+The next reward unlocks 24 hours after the previous successful claim and remains claimable for the following 24 hours. A request after this window resets the cycle to Day 1 and logs a `STREAK_RESET` event.
 
-## Environment secrets
+## Production Checklist
 
-Never commit `.env`. Use `.env.example`. MongoDB credentials and JWT secrets stay server-side.
+- Use a cryptographically secure random `JWT_SECRET` (at least 32 bytes / 64 hex characters).
+- Store JWT tokens in `HttpOnly`, `Secure`, `SameSite=Strict` cookies in production web applications.
+- Restrict `CLIENT_URL` to the exact deployed frontend origin.
+- Restrict MongoDB Atlas network access to application server IP addresses.
+- Enforce HTTPS and TLS 1.3 in production environments.
+- Review audit logs for suspicious or repeated claim rejections.
 
-## Production checklist
-
-- Use a strong random `JWT_SECRET`.
-- Restrict `CLIENT_URL` to the deployed frontend origin.
-- Restrict MongoDB Atlas network access appropriately.
-- Use HTTPS in production.
-- Do not enable insecure TLS certificate bypasses.
-- Keep rate limiting enabled.
-- Review audit logs for suspicious claim activity.

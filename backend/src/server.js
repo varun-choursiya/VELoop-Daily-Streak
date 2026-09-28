@@ -51,6 +51,17 @@ app.use(errorHandler);
 
 const port = Number(process.env.PORT || 5000);
 
+if (!process.env.JWT_SECRET) {
+  console.error("FATAL: JWT_SECRET environment variable is missing.");
+  process.exit(1);
+}
+
+if (process.env.JWT_SECRET.length < 32) {
+  console.warn(
+    "SECURITY WARNING: JWT_SECRET should be at least 32 characters (256 bits) for robust production security."
+  );
+}
+
 connectDB()
   .then(() => {
     app.listen(port, () => {
@@ -61,3 +72,4 @@ connectDB()
     console.error("Startup failed:", error);
     process.exit(1);
   });
+
