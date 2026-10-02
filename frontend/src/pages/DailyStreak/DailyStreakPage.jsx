@@ -1,3 +1,4 @@
+
 import { useCallback, useEffect, useState } from "react";
 import {
   ArrowLeft,
@@ -10,15 +11,19 @@ import {
   LogOut,
   RefreshCw,
   ShieldCheck,
-  Sparkles,
-  Trophy,
-  WalletCards
+  Sparkles
 } from "lucide-react";
 
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext.jsx";
-import { getHistory, getStreak, getWallet, claimStreak } from "../../services/streakApi.js";
+import {
+  getHistory,
+  getStreak,
+  getWallet,
+  claimStreak
+} from "../../services/streakApi.js";
 import styles from "./DailyStreak.module.css";
+
 import biggerStreak from "../../assets/Bigger_Streak.png";
 import day4Asset from "../../assets/Day-4.png";
 import day5Asset from "../../assets/Day-5.png";
@@ -34,11 +39,15 @@ import vesCoin from "../../assets/VEs_Coin.png";
 
 function formatReward(reward) {
   if (!reward) return "—";
-  return reward.currency === "INR" ? `₹${reward.amount}` : `+${reward.amount} VES`;
+
+  return reward.currency === "INR"
+    ? `₹${reward.amount}`
+    : `+${reward.amount} VES`;
 }
 
 function formatDate(value) {
   if (!value) return "—";
+
   return new Intl.DateTimeFormat("en-IN", {
     dateStyle: "medium",
     timeStyle: "short"
@@ -54,11 +63,18 @@ function Countdown({ nextClaimAt, serverTime, onDone }) {
       return undefined;
     }
 
-    const serverOffset = new Date(serverTime).getTime() - Date.now();
+    const serverOffset =
+      new Date(serverTime).getTime() - Date.now();
+
     let finished = false;
 
     const tick = () => {
-      const left = Math.max(0, new Date(nextClaimAt).getTime() - (Date.now() + serverOffset));
+      const left = Math.max(
+        0,
+        new Date(nextClaimAt).getTime() -
+        (Date.now() + serverOffset)
+      );
+
       setRemaining(left);
 
       if (left <= 0 && !finished) {
@@ -68,13 +84,21 @@ function Countdown({ nextClaimAt, serverTime, onDone }) {
     };
 
     tick();
+
     const timer = window.setInterval(tick, 1000);
+
     return () => window.clearInterval(timer);
   }, [nextClaimAt, serverTime, onDone]);
 
   const totalSeconds = Math.floor(remaining / 1000);
-  const hours = String(Math.floor(totalSeconds / 3600)).padStart(2, "0");
-  const minutes = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, "0");
+  const hours = String(
+    Math.floor(totalSeconds / 3600)
+  ).padStart(2, "0");
+
+  const minutes = String(
+    Math.floor((totalSeconds % 3600) / 60)
+  ).padStart(2, "0");
+
   const seconds = String(totalSeconds % 60).padStart(2, "0");
 
   return <span>{hours}:{minutes}:{seconds}</span>;
@@ -89,15 +113,26 @@ function StreakSkeleton() {
           <span className={styles.skeletonLineLarge} />
           <span className={styles.skeletonLine} />
           <span className={styles.skeletonLineShort} />
+
           <div className={styles.skeletonStats}>
-            <span /><span /><span />
+            <span />
+            <span />
+            <span />
           </div>
         </div>
+
         <div className={styles.skeletonPanel} />
       </div>
+
       <div className={styles.skeletonHeading} />
+
       <div className={styles.skeletonGrid}>
-        {Array.from({ length: 7 }).map((_, index) => <div key={index} className={styles.skeletonCard} />)}
+        {Array.from({ length: 7 }).map((_, index) => (
+          <div
+            key={index}
+            className={styles.skeletonCard}
+          />
+        ))}
       </div>
     </div>
   );
@@ -119,18 +154,33 @@ export default function DailyStreakPage() {
   const load = useCallback(async ({ quiet = false } = {}) => {
     try {
       if (!quiet) setError("");
-      const [streakResponse, walletResponse, historyResponse] = await Promise.all([
+
+      const [
+        streakResponse,
+        walletResponse,
+        historyResponse
+      ] = await Promise.all([
         getStreak(),
         getWallet(),
         getHistory()
       ]);
 
       const streakData = streakResponse.data;
+
       setData(streakData);
-      setWallet(streakData.wallet || walletResponse.data.wallet || null);
+
+      setWallet(
+        streakData.wallet ||
+        walletResponse.data.wallet ||
+        null
+      );
+
       setHistory(historyResponse.data.history || []);
     } catch (err) {
-      setError(err.response?.data?.message || "Unable to load your streak.");
+      setError(
+        err.response?.data?.message ||
+        "Unable to load your streak."
+      );
     } finally {
       setLoading(false);
     }
@@ -142,16 +192,24 @@ export default function DailyStreakPage() {
 
   async function handleClaim() {
     if (claiming) return;
+
     setClaiming(true);
     setError("");
 
     try {
       setCpa(true);
+
+      // Demo verification animation.
       await new Promise((resolve) => setTimeout(resolve, 900));
+
       await claimStreak();
       await load({ quiet: true });
     } catch (err) {
-      setError(err.response?.data?.message || "Unable to process your reward.");
+      setError(
+        err.response?.data?.message ||
+        "Unable to process your reward."
+      );
+
       await load({ quiet: true });
     } finally {
       setCpa(false);
@@ -164,16 +222,25 @@ export default function DailyStreakPage() {
     navigate("/login");
   }
 
-  const handleTimerDone = useCallback(() => load({ quiet: true }), [load]);
+  const handleTimerDone = useCallback(
+    () => load({ quiet: true }),
+    [load]
+  );
 
   if (loading) {
     return (
       <div className={styles.page}>
         <div className={styles.brandLoader}>
-          <div className={styles.loaderMark}><Sparkles size={30} /></div>
+          <div className={styles.loaderMark}>
+            <Sparkles size={30} />
+          </div>
+
           <strong>VELoop Rewards</strong>
           <span>Loading your streak...</span>
-          <div className={styles.loaderBar}><span /></div>
+
+          <div className={styles.loaderBar}>
+            <span />
+          </div>
         </div>
       </div>
     );
@@ -185,10 +252,17 @@ export default function DailyStreakPage() {
         <div className="container py-5">
           <div className={styles.errorState}>
             <ShieldCheck size={28} />
+
             <h2>We couldn't load your streak</h2>
+
             <p>{error || "Please try again."}</p>
-            <button className={styles.claimButton} onClick={() => load()}>
-              <RefreshCw size={16} /> Retry
+
+            <button
+              className={styles.claimButton}
+              onClick={() => load()}
+            >
+              <RefreshCw size={16} />
+              Retry
             </button>
           </div>
         </div>
@@ -196,38 +270,81 @@ export default function DailyStreakPage() {
     );
   }
 
-  const current = data.rewards.find((item) => item.day === data.streak.currentDay);
-  const available = current?.status === "AVAILABLE";
   const completed = data.streak.status === "COMPLETED";
-  const progress = Math.min(100, (data.streak.checkedIn / data.streak.totalRewards) * 100);
+
+  const progress = Math.min(
+    100,
+    (data.streak.checkedIn / data.streak.totalRewards) * 100
+  );
+
   const displayUser = data.user || user;
+
   return (
     <div className={styles.page}>
       <div className={styles.backgroundGlow} />
-      <img className={styles.topLeftArt} src={topLeftAsset} alt="" aria-hidden="true" />
-      <img className={styles.topRightArt} src={topRightAsset} alt="" aria-hidden="true" />
 
+      <img
+        className={styles.topLeftArt}
+        src={topLeftAsset}
+        alt=""
+        aria-hidden="true"
+      />
+
+      <img
+        className={styles.topRightArt}
+        src={topRightAsset}
+        alt=""
+        aria-hidden="true"
+      />
+
+      {/* NAVBAR */}
       <header className={styles.header}>
         <div className="container d-flex align-items-center justify-content-between gap-3">
-          <button className={styles.backButton} onClick={() => navigate(-1)}>
+          <button
+            className={styles.backButton}
+            type="button"
+            onClick={() => navigate(-1)}
+          >
             <ArrowLeft size={18} />
             <span>Daily Streak</span>
           </button>
 
           <div className={styles.headerRight}>
-            <div className={styles.walletPill} title="Backend wallet balance">
+            {/* Wallet balance */}
+            <div
+              className={styles.walletPill}
+              title="Backend wallet balance"
+            >
               <img src={vesCoin} alt="VES" />
-              <span>{wallet?.vesBalance ?? 0} VES</span>
+
+              <span>
+                {wallet?.vesBalance ?? 0} VES
+              </span>
             </div>
-            <div className={styles.streakPill} aria-label={`${data.streak.currentStreak} day streak`}>
-              <img src={flameAsset} alt="" aria-hidden="true" />
+
+            {/* Compact streak indicator */}
+            <div
+              className={styles.streakPill}
+              aria-label={`${data.streak.currentStreak} day streak`}
+              title={`${data.streak.currentStreak} day streak`}
+            >
+              <img
+                src={flameAsset}
+                alt=""
+                aria-hidden="true"
+              />
+
               <span>{data.streak.currentStreak}</span>
             </div>
+
+            {/* Account menu */}
             <div className={styles.accountMenuWrap}>
               <button
                 className={styles.accountButton}
                 type="button"
-                onClick={() => setAccountMenuOpen((open) => !open)}
+                onClick={() =>
+                  setAccountMenuOpen((open) => !open)
+                }
                 aria-label="Account menu"
                 aria-expanded={accountMenuOpen}
                 aria-haspopup="menu"
@@ -235,10 +352,20 @@ export default function DailyStreakPage() {
               >
                 <UserRound size={18} />
               </button>
+
               {accountMenuOpen && (
-                <div className={styles.accountPopover} role="menu">
-                  <span className={styles.accountLabel}>SIGNED IN AS</span>
-                  <strong className={styles.accountEmail}>{displayUser?.email || "Email unavailable"}</strong>
+                <div
+                  className={styles.accountPopover}
+                  role="menu"
+                >
+                  <span className={styles.accountLabel}>
+                    SIGNED IN AS
+                  </span>
+
+                  <strong className={styles.accountEmail}>
+                    {displayUser?.email || "Email unavailable"}
+                  </strong>
+
                   <button
                     className={styles.accountLogout}
                     type="button"
@@ -248,7 +375,8 @@ export default function DailyStreakPage() {
                       handleLogout();
                     }}
                   >
-                    <LogOut size={16} /> Log out
+                    <LogOut size={16} />
+                    Log out
                   </button>
                 </div>
               )}
@@ -261,48 +389,96 @@ export default function DailyStreakPage() {
         {error && (
           <div className={styles.errorBox} role="alert">
             <span>{error}</span>
-            <button onClick={() => load({ quiet: true })}><RefreshCw size={15} /></button>
+
+            <button
+              type="button"
+              onClick={() => load({ quiet: true })}
+              aria-label="Retry loading"
+            >
+              <RefreshCw size={15} />
+            </button>
           </div>
         )}
 
         {data.streak.wasReset && (
           <div className={styles.resetBox} role="status">
-            <div className={styles.resetIcon}><RefreshCw size={16} /></div>
+            <div className={styles.resetIcon}>
+              <RefreshCw size={16} />
+            </div>
+
             <div>
               <strong>Your streak has been reset</strong>
-              <span>The required claim window was missed. Day 1 is available again.</span>
+
+              <span>
+                The required claim window was missed.
+                Day 1 is available again.
+              </span>
             </div>
           </div>
         )}
 
+        {/* HERO SECTION */}
         <section className={styles.hero}>
           <div className={styles.heroCopy}>
             <div className={styles.heroArt}>
               <picture>
-                <source media="(max-width: 600px)" srcSet={mobileHero} />
-                <img src={biggerStreak} alt="Daily streak rewards" />
+                <source
+                  media="(max-width: 600px)"
+                  srcSet={mobileHero}
+                />
+
+                <img
+                  src={biggerStreak}
+                  alt="Daily streak rewards"
+                />
               </picture>
             </div>
-            <p className="eyebrow">DAILY CHECK-IN • VELoop REWARDS</p>
-            <h1>Keep your streak.<br /><span>Unlock more.</span></h1>
+
+            <p className="eyebrow">
+              DAILY CHECK-IN • VELoop REWARDS
+            </p>
+
+            <h1>
+              Keep your streak.
+              <br />
+              <span>Unlock more.</span>
+            </h1>
+
             <p className={styles.heroText}>
-              Check in every day, protect your streak, and unlock rewards that grow as you progress.
+              Check in every day, protect your streak,
+              and unlock rewards that grow as you progress.
             </p>
 
             <div className={styles.progressWrap}>
               <div className={styles.progressLabel}>
-                <span>Day {Math.min(data.streak.totalRewards, Math.max(1, data.streak.checkedIn))} of {data.streak.totalRewards}</span>
-                <strong>{data.streak.checkedIn}/{data.streak.totalRewards}</strong>
+                <span>
+                  Day{" "}
+                  {Math.min(
+                    data.streak.totalRewards,
+                    Math.max(1, data.streak.checkedIn)
+                  )}{" "}
+                  of {data.streak.totalRewards}
+                </span>
+
+                <strong>
+                  {data.streak.checkedIn}/{data.streak.totalRewards}
+                </strong>
               </div>
-              <div className={styles.progressTrack}><span style={{ width: `${progress}%` }} /></div>
+
+              <div className={styles.progressTrack}>
+                <span style={{ width: `${progress}%` }} />
+              </div>
             </div>
 
             {!completed && data.streak.nextClaimAt && (
               <div className={styles.heroCountdown}>
                 <div>
                   <span>NEXT REWARD IN</span>
-                  <strong>Day {data.streak.currentDay}</strong>
+                  <strong>
+                    Day {data.streak.currentDay}
+                  </strong>
                 </div>
+
                 <b>
                   <Countdown
                     nextClaimAt={data.streak.nextClaimAt}
@@ -316,12 +492,20 @@ export default function DailyStreakPage() {
             <div className={styles.statsRow}>
               <div className={styles.stat}>
                 <span>Current Streak</span>
-                <strong>{data.streak.currentStreak} days</strong>
+                <strong>
+                  {data.streak.currentStreak} days
+                </strong>
               </div>
+
               <div className={styles.stat}>
                 <span>Next Reward</span>
-                <strong>{completed ? "Completed" : formatReward(data.nextReward)}</strong>
+                <strong>
+                  {completed
+                    ? "Completed"
+                    : formatReward(data.nextReward)}
+                </strong>
               </div>
+
               <div className={styles.stat}>
                 <span>VES Balance</span>
                 <strong>{wallet?.vesBalance ?? 0}</strong>
@@ -329,27 +513,52 @@ export default function DailyStreakPage() {
             </div>
           </div>
 
+          {/* ULTIMATE REWARD */}
           <div className={styles.ultimate}>
             <div className={styles.ultimateHalo} />
+
             <div className={styles.ultimateIcon}>
-              <img src={day7Asset} alt="Day 7 ultimate reward" />
+              <img
+                src={day7Asset}
+                alt="Day 7 ultimate reward"
+              />
             </div>
-            <span className={styles.dayBadge}>DAY {data.ultimateReward?.day}</span>
+
+            <span className={styles.dayBadge}>
+              DAY {data.ultimateReward?.day}
+            </span>
+
             <p>ULTIMATE REWARD</p>
-            <h2>{data.ultimateReward?.currency === "INR" ? "₹" : "+"}{data.ultimateReward?.amount}</h2>
-            <small>{data.ultimateReward?.subtitle}</small>
+
+            <h2>
+              {data.ultimateReward?.currency === "INR"
+                ? "₹"
+                : "+"}
+              {data.ultimateReward?.amount}
+            </h2>
+
+            <small>
+              {data.ultimateReward?.subtitle}
+            </small>
+
             <div className={styles.unlock}>
-              {completed ? "Cycle completed" : `Unlock on Day ${data.ultimateReward?.day}`}
+              {completed
+                ? "Cycle completed"
+                : `Unlock on Day ${data.ultimateReward?.day}`}
             </div>
           </div>
         </section>
 
+        {/* DAILY REWARDS */}
         <section className={styles.sectionHeading}>
           <div>
             <p className="eyebrow">YOUR PROGRESS</p>
             <h2>Daily Rewards</h2>
-            <p>Every status below is calculated by the backend.</p>
+            <p>
+              Every status below is calculated by the backend.
+            </p>
           </div>
+
           <div className={styles.serverBadge}>
             <ShieldCheck size={16} />
             Server verified
@@ -360,45 +569,106 @@ export default function DailyStreakPage() {
           {data.rewards.map((reward) => (
             <article
               key={reward.day}
-              className={`${styles.rewardCard} ${reward.status === "AVAILABLE" ? styles.available : ""
-                } ${reward.status === "CLAIMED" ? styles.claimed : ""} ${reward.status === "MISSED" ? styles.missed : ""
-                } ${reward.day === 7 ? styles.daySeven : ""}`}
+              className={[
+                styles.rewardCard,
+                reward.status === "AVAILABLE"
+                  ? styles.available
+                  : "",
+                reward.status === "CLAIMED"
+                  ? styles.claimed
+                  : "",
+                reward.status === "MISSED"
+                  ? styles.missed
+                  : "",
+                reward.day === 7
+                  ? styles.daySeven
+                  : ""
+              ].filter(Boolean).join(" ")}
             >
               <div className={styles.cardTop}>
-                <span className={styles.dayBadge}>DAY {reward.day}</span>
-                {reward.status === "AVAILABLE" && <span className={styles.todayBadge}>TODAY</span>}
-                {reward.status === "CLAIMED" && <span className={styles.claimedBadge}>DONE</span>}
+                <span className={styles.dayBadge}>
+                  DAY {reward.day}
+                </span>
+
+                {reward.status === "AVAILABLE" && (
+                  <span className={styles.todayBadge}>
+                    TODAY
+                  </span>
+                )}
+
+                {reward.status === "CLAIMED" && (
+                  <span className={styles.claimedBadge}>
+                    DONE
+                  </span>
+                )}
               </div>
 
               <div className={styles.rewardIcon}>
                 {reward.day === 4 ? (
-                  <img src={day4Asset} alt="Day 4 gift card reward" />
+                  <img
+                    src={day4Asset}
+                    alt="Day 4 gift card reward"
+                  />
                 ) : reward.day === 5 ? (
-                  <img src={day5Asset} alt="Day 5 gift card reward" />
+                  <img
+                    src={day5Asset}
+                    alt="Day 5 gift card reward"
+                  />
                 ) : reward.day === 7 ? (
-                  <img src={day7Asset} alt="Day 7 crown reward" />
+                  <img
+                    src={day7Asset}
+                    alt="Day 7 crown reward"
+                  />
                 ) : (
                   <img src={vesCoin} alt="VES reward" />
                 )}
               </div>
 
-              <p className={styles.rewardTitle}>{reward.reward.title}</p>
-              <h3>{reward.reward.currency === "INR" ? "₹" : "+"}{reward.reward.amount}</h3>
-              <span className={styles.rewardSub}>{reward.reward.subtitle}</span>
+              <p className={styles.rewardTitle}>
+                {reward.reward.title}
+              </p>
+
+              <h3>
+                {reward.reward.currency === "INR" ? "₹" : "+"}
+                {reward.reward.amount}
+              </h3>
+
+              <span className={styles.rewardSub}>
+                {reward.reward.subtitle}
+              </span>
 
               <div className={styles.cardAction}>
                 {reward.status === "CLAIMED" && (
-                  <span className={styles.claimedText}><Check size={15} /> Claimed</span>
+                  <span className={styles.claimedText}>
+                    <Check size={15} />
+                    Claimed
+                  </span>
                 )}
+
                 {reward.status === "LOCKED" && (
-                  <span className={styles.lockedText}><Lock size={15} /> Locked</span>
+                  <span className={styles.lockedText}>
+                    <Lock size={15} />
+                    Locked
+                  </span>
                 )}
+
                 {reward.status === "MISSED" && (
-                  <span className={styles.lockedText}><Clock3 size={15} /> Missed</span>
+                  <span className={styles.lockedText}>
+                    <Clock3 size={15} />
+                    Missed
+                  </span>
                 )}
+
                 {reward.status === "AVAILABLE" && (
-                  <button className={styles.claimButton} disabled={claiming} onClick={handleClaim}>
-                    {claiming ? "Processing..." : "Claim Reward"}
+                  <button
+                    className={styles.claimButton}
+                    disabled={claiming}
+                    onClick={handleClaim}
+                  >
+                    {claiming
+                      ? "Processing..."
+                      : "Claim Reward"}
+
                     {!claiming && <span>→</span>}
                   </button>
                 )}
@@ -408,6 +678,7 @@ export default function DailyStreakPage() {
                   data.streak.nextClaimAt && (
                     <div className={styles.timer}>
                       <small>NEXT REWARD IN</small>
+
                       <strong>
                         <Countdown
                           nextClaimAt={data.streak.nextClaimAt}
@@ -422,41 +693,88 @@ export default function DailyStreakPage() {
           ))}
         </section>
 
+        {/* INFORMATION CARDS */}
         <section className={styles.infoGrid}>
           <div>
             <img src={stayActive} alt="Stay active" />
-            <span><strong>Stay Active</strong>Keep checking in consecutively to unlock the next reward.</span>
+
+            <span>
+              <strong>Stay Active</strong>
+              Keep checking in consecutively to unlock
+              the next reward.
+            </span>
           </div>
+
           <div>
-            <img src={exclusiveReward} alt="Exclusive rewards" />
-            <span><strong>Exclusive Rewards</strong>Earn VES and gift-card rewards through the backend wallet.</span>
+            <img
+              src={exclusiveReward}
+              alt="Exclusive rewards"
+            />
+
+            <span>
+              <strong>Exclusive Rewards</strong>
+              Earn VES and gift-card rewards through
+              the backend wallet.
+            </span>
           </div>
+
           <div>
             <img src={trustAsset} alt="Secure rewards" />
-            <span><strong>Protected Claims</strong>Day, reward and eligibility are validated server-side.</span>
+
+            <span>
+              <strong>Protected Claims</strong>
+              Day, reward and eligibility are validated
+              server-side.
+            </span>
           </div>
         </section>
 
+        {/* CLAIM HISTORY */}
         <section className={styles.historySection}>
           <div className={styles.historyHeading}>
             <div>
               <p className="eyebrow">ACTIVITY</p>
               <h2>Recent Claims</h2>
             </div>
+
             <History size={20} />
           </div>
+
           {history.length === 0 ? (
-            <div className={styles.emptyHistory}>Your completed claims will appear here.</div>
+            <div className={styles.emptyHistory}>
+              Your completed claims will appear here.
+            </div>
           ) : (
             <div className={styles.historyList}>
               {history.slice(0, 5).map((claim) => (
-                <div className={styles.historyItem} key={claim.claimId}>
-                  <div className={styles.historyIcon}><Check size={16} /></div>
-                  <div>
-                    <strong>Day {claim.day} • {claim.rewardId?.title || "Daily Reward"}</strong>
-                    <span>{formatDate(claim.claimedAt)}</span>
+                <div
+                  className={styles.historyItem}
+                  key={claim.claimId}
+                >
+                  <div className={styles.historyIcon}>
+                    <Check size={16} />
                   </div>
-                  <b>{claim.rewardId?.currency === "INR" ? "₹" : "+"}{claim.rewardId?.amount}{claim.rewardId?.currency === "VES" ? " VES" : ""}</b>
+
+                  <div>
+                    <strong>
+                      Day {claim.day} •{" "}
+                      {claim.rewardId?.title || "Daily Reward"}
+                    </strong>
+
+                    <span>
+                      {formatDate(claim.claimedAt)}
+                    </span>
+                  </div>
+
+                  <b>
+                    {claim.rewardId?.currency === "INR"
+                      ? "₹"
+                      : "+"}
+                    {claim.rewardId?.amount}
+                    {claim.rewardId?.currency === "VES"
+                      ? " VES"
+                      : ""}
+                  </b>
                 </div>
               ))}
             </div>
@@ -464,18 +782,35 @@ export default function DailyStreakPage() {
         </section>
       </main>
 
+      {/* DEMO VERIFICATION MODAL */}
       {cpa && (
-        <div className={styles.modalBackdrop} role="status" aria-live="polite">
+        <div
+          className={styles.modalBackdrop}
+          role="status"
+          aria-live="polite"
+        >
           <div className={styles.cpaModal}>
-            <div className={styles.cpaIcon}><Gift size={30} /></div>
-            <p className="eyebrow">REWARD VERIFICATION</p>
+            <div className={styles.cpaIcon}>
+              <Gift size={30} />
+            </div>
+
+            <p className="eyebrow">
+              REWARD VERIFICATION
+            </p>
+
             <h2>Preparing your reward...</h2>
-            <p>This demo state represents the future CPA verification step.</p>
+
+            <p>
+              This demo state represents the future CPA
+              verification step.
+            </p>
+
             <div className={styles.spinner} />
           </div>
         </div>
       )}
 
+      {/* FOOTER */}
       <footer className={styles.footer}>
         <div className="container">
           <div className={styles.footerBrand}>
@@ -483,13 +818,15 @@ export default function DailyStreakPage() {
               src={trustAsset}
               alt="VELoop Rewards"
             />
+
             <span>© VELoop Rewards</span>
           </div>
 
           <span>
             Secure daily rewards experience
             <br />
-            Secure &amp; Verified • Rewards are securely processed through VELoop.
+            Secure &amp; Verified • Rewards are securely
+            processed through VELoop.
           </span>
         </div>
       </footer>
