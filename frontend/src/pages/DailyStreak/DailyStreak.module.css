@@ -2005,3 +2005,138 @@
     transition: none !important;
   }
 }
+
+/* Header account menu and compact mobile navbar */
+.accountMenuWrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.accountButton {
+  display: inline-grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 1px solid rgba(188, 132, 255, 0.24);
+  border-radius: 11px;
+  color: #f2eaff;
+  background: rgba(105, 53, 185, 0.14);
+  cursor: pointer;
+}
+
+.accountButton:hover,
+.accountButton:focus-visible {
+  background: rgba(142, 82, 220, 0.25);
+  outline: none;
+  border-color: rgba(188, 132, 255, 0.55);
+}
+
+.accountPopover {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  z-index: 50;
+  width: min(270px, calc(100vw - 32px));
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  border: 1px solid rgba(188, 132, 255, 0.3);
+  border-radius: 14px;
+  background: #171022;
+  box-shadow: 0 16px 42px rgba(0, 0, 0, 0.42);
+}
+
+.accountLabel {
+  color: #a99bbd;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+}
+
+.accountEmail {
+  display: block;
+  max-width: 100%;
+  color: #f7f3ff;
+  font-size: 13px;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.accountLogout {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  width: 100%;
+  margin-top: 3px;
+  padding: 10px 9px;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.04);
+  color: #f7f3ff;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.accountLogout:hover {
+  background: rgba(255, 255, 255, 0.09);
+}
+
+.streakPill {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.streakPill img {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+}
+
+.walletPill {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+@media (max-width: 600px) {
+  .headerRight {
+    gap: 5px;
+    flex-shrink: 0;
+  }
+
+  .walletPill {
+    gap: 4px;
+    padding: 4px 6px;
+    font-size: 10px;
+  }
+
+  .walletPill span {
+    display: inline !important;
+  }
+
+  .walletPill img {
+    width: 17px;
+    height: 17px;
+  }
+
+  .streakPill {
+    gap: 3px;
+    padding: 4px 7px;
+    font-size: 11px;
+  }
+
+  .streakPill img {
+    width: 19px;
+    height: 19px;
+  }
+
+  .accountButton {
+    width: 30px;
+    height: 30px;
+    border-radius: 9px;
+  }
+}

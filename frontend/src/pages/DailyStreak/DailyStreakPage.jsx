@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import {
   ArrowLeft,
+  UserRound,
   Check,
   Clock3,
   Gift,
@@ -113,6 +114,7 @@ export default function DailyStreakPage() {
   const [claiming, setClaiming] = useState(false);
   const [cpa, setCpa] = useState(false);
   const [error, setError] = useState("");
+  const [accountMenuOpen, setAccountMenuOpen] = useState(false);
 
   const load = useCallback(async ({ quiet = false } = {}) => {
     try {
@@ -217,17 +219,40 @@ export default function DailyStreakPage() {
               <img src={vesCoin} alt="VES" />
               <span>{wallet?.vesBalance ?? 0} VES</span>
             </div>
-            <div className={styles.streakPill}>
+            <div className={styles.streakPill} aria-label={`${data.streak.currentStreak} day streak`}>
               <img src={flameAsset} alt="" aria-hidden="true" />
-              {data.streak.currentStreak} Day Streak
+              <span>{data.streak.currentStreak}</span>
             </div>
-            <div className={styles.userMeta}>
-              <strong>{displayUser?.name || "User"}</strong>
-              <span>{displayUser?.email || ""}</span>
+            <div className={styles.accountMenuWrap}>
+              <button
+                className={styles.accountButton}
+                type="button"
+                onClick={() => setAccountMenuOpen((open) => !open)}
+                aria-label="Account menu"
+                aria-expanded={accountMenuOpen}
+                aria-haspopup="menu"
+                title="Account"
+              >
+                <UserRound size={18} />
+              </button>
+              {accountMenuOpen && (
+                <div className={styles.accountPopover} role="menu">
+                  <span className={styles.accountLabel}>SIGNED IN AS</span>
+                  <strong className={styles.accountEmail}>{displayUser?.email || "Email unavailable"}</strong>
+                  <button
+                    className={styles.accountLogout}
+                    type="button"
+                    role="menuitem"
+                    onClick={() => {
+                      setAccountMenuOpen(false);
+                      handleLogout();
+                    }}
+                  >
+                    <LogOut size={16} /> Log out
+                  </button>
+                </div>
+              )}
             </div>
-            <button className={styles.iconButton} onClick={handleLogout} title="Log out">
-              <LogOut size={17} />
-            </button>
           </div>
         </div>
       </header>
