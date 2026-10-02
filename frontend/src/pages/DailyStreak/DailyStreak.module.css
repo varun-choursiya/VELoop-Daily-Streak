@@ -1456,21 +1456,21 @@
     gap: 5px;
   }
 
-  .headerRight .streakPill,
-  .headerRight .userMeta {
-    display: none;
-  }
-
   .walletPill {
     display: inline-flex;
+    align-items: center;
+    gap: 5px;
     padding: 4px 7px;
-    gap: 4px;
+    white-space: nowrap;
   }
 
   .walletPill img {
     width: 18px;
     height: 18px;
+    flex-shrink: 0;
   }
+
+
 
   .iconButton {
     width: 29px;
