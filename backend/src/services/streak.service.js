@@ -196,25 +196,25 @@ export async function getStreakStatus(userId, options = {}) {
     },
     nextReward: nextReward
       ? {
-          day: nextReward.day,
-          type: nextReward.rewardType,
-          currency: nextReward.currency,
-          amount: nextReward.amount,
-          title: nextReward.title,
-          subtitle: nextReward.subtitle,
-          assetType: nextReward.assetType
-        }
+        day: nextReward.day,
+        type: nextReward.rewardType,
+        currency: nextReward.currency,
+        amount: nextReward.amount,
+        title: nextReward.title,
+        subtitle: nextReward.subtitle,
+        assetType: nextReward.assetType
+      }
       : null,
     ultimateReward: ultimateReward
       ? {
-          day: ultimateReward.day,
-          type: ultimateReward.rewardType,
-          currency: ultimateReward.currency,
-          amount: ultimateReward.amount,
-          title: ultimateReward.title,
-          subtitle: ultimateReward.subtitle,
-          assetType: ultimateReward.assetType
-        }
+        day: ultimateReward.day,
+        type: ultimateReward.rewardType,
+        currency: ultimateReward.currency,
+        amount: ultimateReward.amount,
+        title: ultimateReward.title,
+        subtitle: ultimateReward.subtitle,
+        assetType: ultimateReward.assetType
+      }
       : null,
     rewards: cards
   };
@@ -392,7 +392,7 @@ export async function claimCurrentReward(userId, options = {}) {
         );
         cycle.windowExpiresAt = new Date(
           cycle.nextClaimAt.getTime() +
-            config.claimWindowHours * 60 * 60 * 1000
+          config.claimWindowHours * 60 * 60 * 1000
         );
       }
 

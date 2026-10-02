@@ -35,7 +35,6 @@ export function AuthProvider({ children }) {
     setToken(data.token);
     setUser(data.user);
   }
-
   function logout() {
     localStorage.removeItem("veloop_token");
     setToken(null);

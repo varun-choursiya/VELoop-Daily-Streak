@@ -1429,3 +1429,579 @@
     min-height: 29px !important;
   }
 }
+
+/* =========================================================
+   MOBILE-FIRST REFERENCE LAYOUT OVERRIDES
+   Additive CSS only: preserves existing component/API logic.
+========================================================= */
+
+@media (max-width: 600px) {
+  .page {
+    overflow-x: clip;
+  }
+
+  .header .container {
+    gap: 8px !important;
+    min-height: 48px;
+  }
+
+  .backButton {
+    gap: 6px;
+    padding: 11px 0;
+    font-size: 12px;
+    white-space: nowrap;
+  }
+
+  .headerRight {
+    gap: 5px;
+  }
+
+  .headerRight .streakPill,
+  .headerRight .userMeta {
+    display: none;
+  }
+
+  .walletPill {
+    display: inline-flex;
+    padding: 4px 7px;
+    gap: 4px;
+  }
+
+  .walletPill img {
+    width: 18px;
+    height: 18px;
+  }
+
+  .iconButton {
+    width: 29px;
+    height: 29px;
+  }
+
+  .page>main.container {
+    padding-top: 10px !important;
+    padding-bottom: 18px !important;
+  }
+
+  .hero {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 8px;
+    margin-bottom: 18px;
+  }
+
+  .heroCopy {
+    display: grid;
+    grid-template-columns: minmax(82px, 0.78fr) minmax(0, 1.22fr);
+    grid-template-rows: auto auto auto auto auto;
+    align-items: center;
+    column-gap: 10px;
+    row-gap: 4px;
+    min-height: 0;
+    padding: 12px;
+    border-radius: 15px;
+  }
+
+  .heroArt {
+    position: relative;
+    grid-column: 1;
+    grid-row: 1 / span 3;
+    right: auto;
+    top: auto;
+    width: 100%;
+    height: 108px;
+    margin: 0;
+    opacity: 1;
+  }
+
+  .heroCopy>.eyebrow {
+    grid-column: 2;
+    grid-row: 1;
+    align-self: end;
+    margin: 0;
+    font-size: 7px;
+    letter-spacing: 0.08em;
+    line-height: 1.35;
+  }
+
+  .heroCopy h1 {
+    grid-column: 2;
+    grid-row: 2;
+    align-self: center;
+    margin: 0;
+    font-size: clamp(21px, 6.2vw, 29px);
+    line-height: 1.02;
+    letter-spacing: -0.04em;
+  }
+
+  .heroText {
+    grid-column: 2;
+    grid-row: 3;
+    align-self: start;
+    margin: 0;
+    font-size: 9px;
+    line-height: 1.4;
+  }
+
+  .progressWrap {
+    grid-column: 1 / -1;
+    grid-row: 4;
+    max-width: none;
+    margin-top: 5px;
+  }
+
+  .progressLabel {
+    margin-bottom: 5px;
+    font-size: 9px;
+  }
+
+  .progressTrack {
+    height: 5px;
+  }
+
+  .heroCountdown {
+    grid-column: 1 / -1;
+    grid-row: 5;
+    width: 100%;
+    margin-top: 4px;
+    padding: 7px 9px;
+    border-radius: 10px;
+  }
+
+  .heroCountdown span {
+    font-size: 7px;
+  }
+
+  .heroCountdown strong {
+    font-size: 10px;
+  }
+
+  .heroCountdown b {
+    font-size: 16px;
+  }
+
+  .statsRow {
+    grid-column: 1 / -1;
+    grid-row: 6;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 5px;
+    margin-top: 5px;
+  }
+
+  .stat {
+    padding: 7px 6px;
+    border-radius: 9px;
+  }
+
+  .stat span {
+    font-size: 7px;
+    letter-spacing: 0;
+    line-height: 1.25;
+  }
+
+  .stat strong {
+    margin-top: 3px;
+    font-size: clamp(10px, 3vw, 13px);
+  }
+
+  .ultimate {
+    display: grid;
+    grid-template-columns: 76px minmax(0, 1fr);
+    grid-template-rows: repeat(5, auto);
+    align-items: center;
+    justify-items: start;
+    column-gap: 12px;
+    row-gap: 2px;
+    min-height: 0;
+    padding: 10px 12px;
+    border-radius: 15px;
+    text-align: left;
+  }
+
+  .ultimateIcon {
+    grid-column: 1;
+    grid-row: 1 / span 5;
+    width: 72px;
+    height: 72px;
+    margin: 0;
+    justify-self: center;
+  }
+
+  .ultimateIcon img {
+    width: 68px;
+    height: 68px;
+  }
+
+  .ultimate .dayBadge {
+    grid-column: 2;
+    grid-row: 1;
+    font-size: 7px;
+    padding: 3px 6px;
+  }
+
+  .ultimate p {
+    grid-column: 2;
+    grid-row: 2;
+    margin: 2px 0 0;
+    font-size: 8px;
+    letter-spacing: 0.1em;
+  }
+
+  .ultimate h2 {
+    grid-column: 2;
+    grid-row: 3;
+    font-size: 27px;
+    line-height: 1.05;
+  }
+
+  .ultimate small {
+    grid-column: 2;
+    grid-row: 4;
+    font-size: 9px;
+  }
+
+  .unlock {
+    grid-column: 2;
+    grid-row: 5;
+    margin-top: 3px;
+    font-size: 8px;
+  }
+
+  .ultimateHalo {
+    width: 120px;
+    height: 120px;
+    left: -20px;
+  }
+
+  .sectionHeading {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 9px;
+  }
+
+  .sectionHeading .eyebrow {
+    margin-bottom: 3px;
+    font-size: 8px;
+  }
+
+  .sectionHeading h2 {
+    font-size: 19px;
+    line-height: 1.15;
+  }
+
+  .sectionHeading p:not(.eyebrow),
+  .serverBadge {
+    display: none;
+  }
+
+  .rewardGrid,
+  .skeletonGrid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 5px;
+  }
+
+  .rewardCard {
+    min-width: 0;
+    min-height: 0;
+    padding: 6px 5px 7px;
+    border-radius: 10px;
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.18);
+  }
+
+  .cardTop {
+    min-height: 17px;
+    gap: 2px;
+    align-items: center;
+  }
+
+  .dayBadge,
+  .todayBadge,
+  .claimedBadge {
+    border-radius: 5px;
+    padding: 3px 4px;
+    font-size: 6px;
+    letter-spacing: 0;
+    line-height: 1.1;
+  }
+
+  .todayBadge {
+    font-size: 5px;
+  }
+
+  .rewardIcon {
+    min-height: 43px;
+    padding: 2px 0;
+  }
+
+  .rewardIcon img {
+    width: 100%;
+    max-width: 52px;
+    height: 42px;
+    object-fit: contain;
+  }
+
+  .rewardTitle {
+    font-size: 8px;
+    line-height: 1.2;
+    overflow-wrap: anywhere;
+  }
+
+  .rewardCard h3 {
+    margin-top: 2px;
+    font-size: clamp(13px, 4vw, 18px);
+    line-height: 1.05;
+  }
+
+  .rewardSub {
+    min-height: 14px;
+    font-size: 7px;
+    line-height: 1.2;
+    overflow-wrap: anywhere;
+  }
+
+  .cardAction {
+    min-height: 22px;
+    margin-top: 5px;
+    align-items: center;
+  }
+
+  .claimButton {
+    min-height: 23px;
+    padding: 5px 3px;
+    gap: 2px;
+    border-radius: 6px;
+    font-size: 7px;
+    line-height: 1.1;
+  }
+
+  .claimedText,
+  .lockedText {
+    gap: 2px;
+    font-size: 7px;
+    line-height: 1.1;
+  }
+
+  .claimedText svg,
+  .lockedText svg {
+    width: 10px;
+    height: 10px;
+    flex: 0 0 auto;
+  }
+
+  .timer {
+    padding: 4px 2px;
+    border-radius: 6px;
+  }
+
+  .timer small {
+    font-size: 5px;
+    letter-spacing: 0;
+  }
+
+  .timer strong {
+    font-size: 9px;
+  }
+
+  .infoGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 5px;
+    margin-top: 12px;
+  }
+
+  .infoGrid>div {
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 5px;
+    min-width: 0;
+    padding: 8px 5px;
+    border-radius: 10px;
+    text-align: center;
+  }
+
+  .infoGrid>div>img {
+    width: 34px;
+    height: 32px;
+    flex-basis: 32px;
+  }
+
+  .infoGrid strong {
+    margin-bottom: 3px;
+    font-size: 8px;
+    line-height: 1.2;
+  }
+
+  .infoGrid span {
+    font-size: 7px;
+    line-height: 1.3;
+    overflow-wrap: anywhere;
+  }
+
+  .historySection {
+    margin-top: 14px;
+    padding: 12px;
+    border-radius: 13px;
+  }
+
+  .historyHeading {
+    margin-bottom: 10px;
+  }
+
+  .historyHeading h2 {
+    font-size: 18px;
+  }
+
+  .historyItem {
+    grid-template-columns: 24px minmax(0, 1fr) auto;
+    gap: 7px;
+    padding: 8px 6px;
+  }
+
+  .historyItem b {
+    grid-column: auto;
+    font-size: 10px;
+  }
+
+  .historyItem strong {
+    font-size: 9px;
+    overflow-wrap: anywhere;
+  }
+
+  .historyItem span {
+    font-size: 8px;
+  }
+
+  .footer {
+    margin-top: 16px;
+    min-height: 0;
+  }
+
+  .footer .container {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    min-height: 54px;
+    padding: 10px 12px;
+  }
+
+  .footerBrand {
+    gap: 5px !important;
+    font-size: 8px;
+    white-space: nowrap;
+  }
+
+  .footer .footerBrand img {
+    width: 24px !important;
+    height: 23px !important;
+    min-width: 24px !important;
+    min-height: 23px !important;
+    max-width: 24px !important;
+    max-height: 23px !important;
+  }
+
+  .footer .container>span {
+    max-width: 58%;
+    text-align: right;
+    font-size: 7px;
+    line-height: 1.35;
+  }
+
+  .skeletonHero {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .skeletonPanel {
+    min-height: 260px;
+    padding: 12px;
+  }
+
+  .skeletonLineSmall {
+    margin-top: 65px;
+  }
+
+  .skeletonGrid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .skeletonCard {
+    min-height: 125px;
+    border-radius: 10px;
+  }
+
+  .cpaModal {
+    padding: 24px 18px;
+    border-radius: 17px;
+  }
+
+  .cpaModal h2 {
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 360px) {
+  .heroCopy {
+    grid-template-columns: minmax(72px, 0.7fr) minmax(0, 1.3fr);
+    column-gap: 7px;
+    padding: 9px;
+  }
+
+  .heroArt {
+    height: 96px;
+  }
+
+  .heroCopy h1 {
+    font-size: 21px;
+  }
+
+  .rewardGrid,
+  .skeletonGrid {
+    gap: 4px;
+  }
+
+  .rewardCard {
+    padding: 5px 3px 6px;
+  }
+
+  .dayBadge,
+  .claimedBadge {
+    padding: 3px 3px;
+    font-size: 5.5px;
+  }
+
+  .rewardTitle {
+    font-size: 7px;
+  }
+
+  .claimButton {
+    font-size: 6px;
+  }
+}
+
+@media (min-width: 601px) and (max-width: 900px) {
+  .statsRow {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .rewardGrid,
+  .skeletonGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  .heroArt img,
+  .ultimateIcon img,
+  .loaderBar span,
+  .spinner {
+    animation: none !important;
+  }
+
+  .rewardCard,
+  .claimButton,
+  .daySeven::before {
+    transition: none !important;
+  }
+}
