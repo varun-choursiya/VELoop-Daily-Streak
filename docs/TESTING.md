@@ -1,124 +1,202 @@
-# VELoop Rewards — Testing & Quality Assurance Report
 
-This document details the test strategy, execution audit, verified results, and manual acceptance procedures for the **VELoop Rewards — Daily Streak** application.
+# VELoop Rewards — Testing and QA Report
 
----
+## 1. Purpose
 
-## 1. Source of Truth & Repository Audit
+This document records the testing performed for the VELoop Rewards Daily Streak application.
 
-### Critical Discrepancy Report:
-- **Discrepancy**: Prior project documentation in `README.md` referenced an automated test suite executed via `npm test` under `backend/` with a claim of "9/9 Passing".
-- **Source Code Audit**: Inspection of `backend/package.json` revealed **no `"test"` script** defined, and no test runner files (e.g. `*.test.js` or `*.spec.js`) were present in the repository.
-- **Resolution**: This report documents the **actual** state of tests, separating live verified tests executed during this audit from tests that were not run or require developer manual execution. No test results are fabricated.
+It separates recorded development test results from scenarios that still require verification. A test must not be marked as passed unless its result was actually observed.
 
----
+## 2. Application Under Test
 
-## 2. Testing Methodology & Verification Categories
+| Component | URL |
+|---|---|
+| Frontend | https://ve-loop-daily-streak.vercel.app |
+| Backend | https://veloop-daily-streak-g4be.onrender.com |
+| Local backend used for recorded API checks | `http://localhost:5000` |
 
-In compliance with the project audit rules, every test scenario is categorized into one of five statuses:
-1. **Verified by Live Execution (Audited)**: Executed directly against the running API or build tools during this audit with verified HTTP responses and exit codes.
-2. **Implemented in Code**: Fully present and functional in the backend/frontend codebase, confirmed by source code inspection.
-3. **Manually Verified by Developer**: Tested by developer interaction through the UI or Postman.
-4. **Not Executed**: Not run during this audit to avoid mutating database state or because it requires time-advancement simulation.
-5. **Known Issue / Gap**: A recognized discrepancy between documentation and implementation.
+**Important:** The recorded API test results below were obtained against the local backend. They must not be treated as proof that the corresponding production endpoints pass.
 
----
+## 3. Test Environment
 
-## 3. Verified Test Results Matrix
+The development environment includes:
 
-The following table records the tests performed against the live backend (`http://localhost:5000`) and frontend build system during this audit:
+- React frontend.
+- Node.js and Express.js backend.
+- MongoDB.
+- JWT-based authentication.
+- Axios-based frontend API requests.
+- Vite frontend build tooling.
 
-| ID | Test Scenario | Target | Verification Method | Expected Result | Actual Result | Status |
-|---|---|---|---|---|---|---|
-| **T01** | Service Health Check | `GET /health` | HTTP GET | 200 OK, service name | 200 OK `{"success":true,"service":"veloop-daily-streak-api"}` | **Verified by Live Execution** |
-| **T02** | Unauthenticated Request Protection | `GET /api/daily-streak` | HTTP GET (No token) | 401 Unauthorized, `AUTH_REQUIRED` | 401 `{"success":false,"code":"AUTH_REQUIRED","message":"Please log in to continue."}` | **Verified by Live Execution** |
-| **T03** | Invalid / Malformed JWT | `GET /api/daily-streak` | HTTP GET (`Bearer invalid123`) | 401 Unauthorized, `AUTH_INVALID` | 401 `{"success":false,"code":"AUTH_INVALID","message":"Please log in to continue."}` | **Verified by Live Execution** |
-| **T04** | Registration Input Validation | `POST /api/auth/register` | HTTP POST (Malformed fields) | 400 Bad Request, `VALIDATION_ERROR` | 400 `{"success":false,"code":"VALIDATION_ERROR","message":"Please provide valid account details."}` | **Verified by Live Execution** |
-| **T05** | Duplicate Email Registration | `POST /api/auth/register` | HTTP POST (Existing email) | 409 Conflict, `EMAIL_EXISTS` | 409 `{"success":false,"code":"EMAIL_EXISTS","message":"An account with this email already exists."}` | **Verified by Live Execution** |
-| **T06** | Invalid Login Credentials | `POST /api/auth/login` | HTTP POST (Bad password) | 401 Unauthorized, `INVALID_CREDENTIALS` | 401 `{"success":false,"code":"INVALID_CREDENTIALS","message":"Invalid email or password."}` | **Verified by Live Execution** |
-| **T07** | Demo User Authentication | `POST /api/auth/login` | HTTP POST (`demo@veloop.local`) | 200 OK, valid JWT, user object | 200 OK `{ success: true, user: { id, name, email }, token: "..." }` | **Verified by Live Execution** |
-| **T08** | Streak Status Retrieval | `GET /api/daily-streak` | HTTP GET (Valid JWT) | 200 OK, 7 reward cards, wallet | 200 OK `{ serverTime, wallet, streak, rewards: [7 cards] }` | **Verified by Live Execution** |
-| **T09** | Parameter Tampering Rejection | `POST /api/daily-streak/claim` | HTTP POST (`{"day": 7}`) | 400 Bad Request, `UNTRUSTED_CLAIM_INPUT` | 400 `{"success":false,"code":"UNTRUSTED_CLAIM_INPUT","message":"Claim day, reward and user identity are strictly controlled by the server."}` | **Verified by Live Execution** |
-| **T10** | Premature / Locked Claim Rejection | `POST /api/daily-streak/claim` | HTTP POST (`{}`) while locked | 409 Conflict, `STREAK_LOCKED` | 409 `{"success":false,"code":"STREAK_LOCKED","message":"Your next reward is not available yet."}` | **Verified by Live Execution** |
-| **T11** | Wallet Balance Query | `GET /api/wallet` | HTTP GET (Valid JWT) | 200 OK, balances returned | 200 OK `{"success":true,"wallet":{"vesBalance":15,"amazonGiftCardBalanceInr":0}}` | **Verified by Live Execution** |
-| **T12** | Wallet Transactions Ledger Query | `GET /api/wallet/transactions` | HTTP GET (Valid JWT) | 200 OK, array of transactions | 200 OK `{ success: true, transactions: [...] }` | **Verified by Live Execution** |
-| **T13** | Streak Claim History Query | `GET /api/daily-streak/history` | HTTP GET (Valid JWT) | 200 OK, populated claims | 200 OK `{ success: true, history: [...] }` | **Verified by Live Execution** |
-| **T14** | Frontend Production Build | `frontend/` | `npm run build` (Vite) | Exit code 0, dist/ bundle | Exit code 0, 1758 modules transformed in 2.72s | **Verified by Live Execution** |
-| **T15** | Deployed Frontend Availability | `https://ve-loop-daily-streak.vercel.app` | HTTP GET / HTTPS | HTTP 200 OK | HTTP 200 OK (Vercel CDN HIT) | **Verified by Live Execution** |
+Exact package versions and runtime configuration are available in the project's package and environment configuration files.
 
----
+## 4. Recorded Test Results
 
-## 4. Test Scenarios Not Run & Implementation Audit
+The following results were recorded in the development QA report.
 
-The following scenarios are implemented in code but were **not run** during this audit session to maintain non-destructive safety on live data:
+| ID | Test | Recorded result | Status |
+|---|---|---|---|
+| T01 | Health endpoint | HTTP 200 | PASS — recorded |
+| T02 | Protected endpoint without token | HTTP 401 | PASS — recorded |
+| T03 | Protected endpoint with invalid JWT | HTTP 401 | PASS — recorded |
+| T04 | Malformed registration request | HTTP 400 | PASS — recorded |
+| T05 | Duplicate email registration | HTTP 409 | PASS — recorded |
+| T06 | Invalid login credentials | HTTP 401 | PASS — recorded |
+| T07 | Demo user login | HTTP 200 | PASS — recorded |
+| T08 | Streak status request | HTTP 200 | PASS — recorded |
+| T09 | Invalid/tampered request | HTTP 400 | PASS — recorded |
+| T10 | Attempt to claim a locked reward | HTTP 409 | PASS — recorded |
+| T11 | Wallet request | HTTP 200 | PASS — recorded |
+| T12 | Wallet transaction history request | HTTP 200 | PASS — recorded |
+| T13 | Streak claim history request | HTTP 200 | PASS — recorded |
+| T14 | Frontend production build | Build passed | PASS — recorded |
+| T15 | Deployed Vercel frontend response | HTTP 200 | PASS — recorded |
 
-### 4.1 Valid Reward Claim & Wallet Credit (New User)
-- **Status**: Implemented in code (`backend/src/services/streak.service.js:claimCurrentReward`)
-- **Code Audit**: Uses `session.withTransaction`. Verifies Day 1 eligibility, creates `StreakClaim`, increments `Wallet`, appends `WalletTransaction`, and writes `AuditLog`.
-- **Reason Not Run**: Requires registering a new disposable account and claiming Day 1.
+These entries reflect previously recorded development results, not a new test execution performed during this review. Retain them only if they match your actual test evidence.
 
-### 4.2 Duplicate Claim Prevention on Same Day
-- **Status**: Implemented in code (`backend/src/models/StreakClaim.js`)
-- **Code Audit**: Compound unique index `{ userId: 1, cycleId: 1, day: 1 }` guarantees database-level duplicate prevention. Catch block in `streak.service.js` catches error code `11000` and returns `409 ALREADY_CLAIMED`.
-- **Reason Not Run**: The demo user was already at Day 2 in locked cooldown, which properly rejected with `STREAK_LOCKED` before reaching duplicate check.
+## 5. Test Coverage
 
-### 4.3 High-Concurrency Race Condition Protection
-- **Status**: Implemented in code (`session.withTransaction` + compound unique index)
-- **Code Audit**: Simultaneous requests are serialized by MongoDB transaction write locks; the secondary request encounters write conflict or `11000` duplicate key exception, triggering rollback.
-- **Reason Not Run**: High-concurrency load testing requires external siege/k6/autocannon script.
+### Authentication
 
-### 4.4 Streak Reset on Window Expiration (Missed Day)
-- **Status**: Implemented in code (`maybeResetMissedCycle` in `streak.service.js`)
-- **Code Audit**: Evaluates `config.resetOnMissedDay && cycle.currentDay > 1 && cycle.windowExpiresAt && now > cycle.windowExpiresAt`. If true, transitions cycle to `RESET` with `resetReason: "REQUIRED_CLAIM_WINDOW_MISSED"` and generates a new cycle at Day 1.
-- **Reason Not Run**: Requires mocking system clock or allowing 48 hours to elapse naturally.
+Recorded checks cover missing authentication, an invalid JWT, malformed registration input, duplicate registration, invalid login credentials, and successful demo-user login.
 
-### 4.5 7-Day Cycle Completion
-- **Status**: Implemented in code (`claimCurrentReward` lines 383–388)
-- **Code Audit**: When Day 7 is claimed, sets `cycle.currentDay = 8`, `cycle.status = "COMPLETED"`, and clears `nextClaimAt`.
-- **Reason Not Run**: Requires completing 7 full 24-hour cycles.
+Additional checks should verify token expiration, logout behavior, and access to another user's data where applicable.
 
----
+### Daily Streak
 
-## 5. Postman Collection Verification Guide
+A successful streak-status request and a rejected locked-reward claim were recorded.
 
-The repository includes a pre-configured Postman collection at:
-`postman/VELoop-Daily-Streak.postman_collection.json`
+The following behaviors still require explicit verification unless separate test evidence is available:
 
-### Included Requests:
-1. `Auth/Register` — Includes test script asserting HTTP 201/409 and saving token.
-2. `Auth/Login` — Includes test script saving `pm.collectionVariables.token`.
-3. `Auth/Me` — Tests JWT profile resolution.
-4. `Daily Streak/Get Streak` — Tests full streak state retrieval.
-5. `Daily Streak/Get History` — Tests claim history retrieval.
-6. `Daily Streak/Claim Current Reward` — Posts `{}` to claim active day.
-7. `Daily Streak/Security - Fake Day/Reward Payload` — Asserts that `{ day: 7, reward: 5000 }` receives HTTP 400.
-8. `Wallet/Get Wallet` — Tests wallet balance retrieval.
-9. `Wallet/Get Wallet Transactions` — Tests transaction history retrieval.
-10. `Health` — Tests GET `http://localhost:5000/health`.
+- A valid eligible claim.
+- A repeated claim after a successful claim.
+- Simultaneous claim requests.
+- Streak reset after a missed eligible period.
+- Completion of the full seven-day reward cycle.
+- Wallet and history consistency after a successful claim.
 
-### Instructions to Execute Postman Tests:
-1. Open Postman and click **Import**.
-2. Select `postman/VELoop-Daily-Streak.postman_collection.json`.
-3. In the collection variables, verify:
-   - `baseUrl`: `http://localhost:5000/api`
-   - `email`: `demo@veloop.local`
-   - `password`: `Demo@12345`
-4. Run `Auth/Login` to populate the `token` variable.
-5. Execute the remaining requests in sequence.
+### Wallet
 
----
+Wallet balance and transaction-history endpoints returned successful responses in the recorded local checks.
 
-## 6. Frontend UI Acceptance Checklist
+A complete claim-flow test should also verify that a successful claim produces the expected persistent balance and transaction record, and that a rejected claim does not incorrectly credit a reward.
 
-| Component / Feature | Implementation Location | Verified Behavior |
+### Frontend
+
+The production frontend returned HTTP 200 in the recorded check, and the frontend build passed.
+
+An HTTP 200 response does not by itself confirm that login, API requests, account menus, wallet values, streak timers, or reward interactions all work correctly in the browser.
+
+## 6. Tests Not Yet Verified
+
+The following items were not confirmed by the recorded QA results:
+
+| Scenario | Status |
+|---|---|
+| Successful eligible reward claim | Not tested in the recorded report |
+| Duplicate claim after a successful claim | Not tested in the recorded report |
+| Concurrent requests attempting the same claim | Not load-tested |
+| Missed-day reset behavior | Not tested in the recorded report |
+| Complete seven-day reward cycle | Not tested in the recorded report |
+| Complete production API flow | Not independently verified here |
+| Production database persistence across a full claim flow | Not independently verified here |
+
+A source-code inspection alone should not be reported as a successful runtime test.
+
+## 7. Manual Verification Checklist
+
+Use this checklist during final testing.
+
+### Authentication
+
+- [ ] Register a new test account.
+- [ ] Log in with valid credentials.
+- [ ] Confirm invalid credentials are rejected.
+- [ ] Confirm protected API requests fail without valid authentication.
+- [ ] Confirm logout clears the frontend's authentication state.
+- [ ] Confirm a logged-out user cannot access protected account data.
+
+### Daily Streak
+
+- [ ] Open the Daily Streak page while authenticated.
+- [ ] Confirm streak information loads from the API.
+- [ ] Confirm the displayed day and claim state match the server response.
+- [ ] Claim a reward when the server says it is eligible.
+- [ ] Refresh the page and verify the updated state persists.
+- [ ] Attempt to claim again and confirm the backend rejects the request.
+- [ ] Attempt to claim a locked reward and confirm it is rejected.
+- [ ] Verify reset behavior using a controlled test setup.
+- [ ] Verify the complete seven-day cycle using a controlled test setup.
+
+### Wallet
+
+- [ ] Confirm the wallet balance loads from the backend.
+- [ ] Confirm a successful reward claim updates the applicable balance.
+- [ ] Confirm the transaction appears in transaction history.
+- [ ] Confirm rejected claims do not incorrectly credit rewards.
+- [ ] Refresh the page and verify persisted data remains consistent.
+
+### Responsive UI
+
+- [ ] Test a narrow mobile viewport.
+- [ ] Test a tablet viewport.
+- [ ] Test a desktop viewport.
+- [ ] Confirm there is no unintended horizontal overflow.
+- [ ] Confirm the wallet and streak indicators remain visible.
+- [ ] Confirm the account popup appears above page content.
+- [ ] Confirm the logout action works.
+- [ ] Confirm loading, success, and error states are understandable.
+
+### Deployment
+
+- [ ] Confirm the Vercel frontend opens.
+- [ ] Confirm the frontend uses the intended Render API URL.
+- [ ] Confirm CORS allows the deployed frontend origin.
+- [ ] Test production login and logout.
+- [ ] Test production streak status.
+- [ ] Test production wallet and transaction history.
+- [ ] Test a successful claim using a designated test account, if safe to do so.
+- [ ] Review Render logs for unexpected errors.
+- [ ] Confirm secrets are not committed to the repository.
+
+## 8. Production Verification Record
+
+Complete this section after running the tests against the deployed environment.
+
+| Check | Result | Evidence / date |
 |---|---|---|
-| **Branded Initial Loader** | `DailyStreakPage.jsx:231-247` | Displays animated sparkles icon and progress bar during data fetch. |
-| **Error & Retry State** | `DailyStreakPage.jsx:251-270` | Displays shield icon, user-friendly error message, and "Retry" button. |
-| **Header Wallet Pill** | `DailyStreakPage.jsx:314-323` | Displays VES coin icon and live balance from backend wallet. |
-| **Header Streak Counter** | `DailyStreakPage.jsx:326-338` | Displays flame icon and active streak day count. |
-| **Account & Logout Popover** | `DailyStreakPage.jsx:341-383` | Click opens dropdown showing email and "Log out" button. |
-| **Reset Banner** | `DailyStreakPage.jsx:403-418` | Displays notification banner when `streak.wasReset` is true. |
-| **Live Countdown** | `DailyStreakPage.jsx:57-105` | Evaluates `nextClaimAt - (Date.now() + serverOffset)`; triggers silent reload on zero. |
-| **7 Reward Cards Grid** | `DailyStreakPage.jsx:568-694` | Renders cards with server-assigned classes: `available`, `claimed`, `locked`, `missed`. |
-| **CPA Verification Modal** | `DailyStreakPage.jsx:786-811` | Displays 900ms simulated reward verification animation upon claim click. |
-| **Claim History List** | `DailyStreakPage.jsx:733-782` | Shows recent 5 claims with formatted dates, reward titles, and transaction amounts. |
+| Frontend opens | Not independently verified here | Add observed result |
+| Production login | Not independently verified here | Add observed result |
+| Production streak status | Not independently verified here | Add observed result |
+| Production wallet | Not independently verified here | Add observed result |
+| Production transaction history | Not independently verified here | Add observed result |
+| Production eligible claim | Not independently verified here | Add observed result |
+| Duplicate claim rejection | Not independently verified here | Add observed result |
+| Production persistence | Not independently verified here | Add observed result |
+
+Do not change a status to PASS until the relevant test has been executed and its result observed.
+
+## 9. Test Data and Credentials
+
+Use dedicated test accounts and non-sensitive sample data.
+
+If a demo account is included in the project, identify it as a test account and confirm that its credentials are intended for sharing before publishing them in documentation.
+
+Never include production passwords, live JWTs, database credentials, or other secrets in this report.
+
+## 10. Known Testing Limitations
+
+- The recorded API tests were performed against the local backend.
+- The frontend build passing does not prove every browser interaction works.
+- An HTTP 200 response from a deployed frontend does not prove every API integration works.
+- Duplicate-claim and concurrency behavior require explicit runtime tests.
+- Full-cycle streak reset and reward behavior require controlled test scenarios.
+- Production verification must be recorded separately from local verification.
+
+## 11. QA Summary
+
+The recorded development report documents successful responses for several authentication, streak, and wallet API checks, as well as a passing frontend build and a successful frontend HTTP response.
+
+The report does not establish that every business rule, concurrent claim scenario, complete seven-day cycle, or production API flow has been verified.
+
+The project should be considered ready for final QA only after the remaining critical scenarios have been tested and the results documented accurately.
