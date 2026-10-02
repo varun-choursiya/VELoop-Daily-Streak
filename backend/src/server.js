@@ -27,13 +27,23 @@ const configuredOrigins = (process.env.CLIENT_URL || "")
 const allowedOrigins = new Set([
   "https://ve-loop-daily-streak.vercel.app",
   "http://localhost:5173",
+  "http://localhost:5174",
   ...configuredOrigins,
 ]);
+
+const isLocalhostOrigin = (origin) => {
+  return /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin);
+};
 
 const corsOptions = {
   origin(origin, callback) {
     // Requests without an Origin header (e.g. server-to-server/health checks).
-    if (!origin || allowedOrigins.has(origin.replace(/\/+$/, ""))) {
+    if (!origin) {
+      return callback(null, true);
+    }
+
+    const cleanOrigin = origin.replace(/\/+$/, "");
+    if (allowedOrigins.has(cleanOrigin) || isLocalhostOrigin(cleanOrigin)) {
       return callback(null, true);
     }
 

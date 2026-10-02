@@ -1,7 +1,5 @@
-
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useRef } from "react";
 import {
-  ArrowLeft,
   UserRound,
   Check,
   Clock3,
@@ -11,9 +9,14 @@ import {
   LogOut,
   RefreshCw,
   ShieldCheck,
-  Sparkles
+  Sparkles,
+  Flame,
+  ArrowRight,
+  Wallet as WalletIcon,
+  ChevronDown,
+  AlertTriangle,
+  Award
 } from "lucide-react";
-
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext.jsx";
 import {
@@ -22,35 +25,30 @@ import {
   getWallet,
   claimStreak
 } from "../../services/streakApi.js";
-import styles from "./DailyStreak.module.css";
 
-import biggerStreak from "../../assets/Bigger_Streak.png";
+import styles from "./DailyStreak.module.css";
+import WalletModal from "../../components/Wallet/WalletModal.jsx";
+import ClaimSuccessModal from "../../components/ClaimModal/ClaimSuccessModal.jsx";
+import ConfettiCanvas from "../../components/Confetti/ConfettiCanvas.jsx";
+
 import day4Asset from "../../assets/Day-4.png";
 import day5Asset from "../../assets/Day-5.png";
 import day7Asset from "../../assets/Day-7.png";
-import exclusiveReward from "../../assets/Exclusive-reward.png";
-import flameAsset from "../../assets/Flame.png";
-import mobileHero from "../../assets/Mobile_Hero.png";
-import stayActive from "../../assets/Stay_Active.png";
-import topLeftAsset from "../../assets/Top_Left.png";
-import topRightAsset from "../../assets/Top_right.png";
-import trustAsset from "../../assets/Trust.png";
 import vesCoin from "../../assets/VEs_Coin.png";
 
 function formatReward(reward) {
   if (!reward) return "—";
-
-  return reward.currency === "INR"
-    ? `₹${reward.amount}`
-    : `+${reward.amount} VES`;
+  return reward.currency === "INR" ? `₹${reward.amount}` : `+${reward.amount} VES`;
 }
 
 function formatDate(value) {
   if (!value) return "—";
-
   return new Intl.DateTimeFormat("en-IN", {
-    dateStyle: "medium",
-    timeStyle: "short"
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true
   }).format(new Date(value));
 }
 
@@ -63,18 +61,11 @@ function Countdown({ nextClaimAt, serverTime, onDone }) {
       return undefined;
     }
 
-    const serverOffset =
-      new Date(serverTime).getTime() - Date.now();
-
+    const serverOffset = new Date(serverTime).getTime() - Date.now();
     let finished = false;
 
     const tick = () => {
-      const left = Math.max(
-        0,
-        new Date(nextClaimAt).getTime() -
-        (Date.now() + serverOffset)
-      );
-
+      const left = Math.max(0, new Date(nextClaimAt).getTime() - (Date.now() + serverOffset));
       setRemaining(left);
 
       if (left <= 0 && !finished) {
@@ -84,57 +75,19 @@ function Countdown({ nextClaimAt, serverTime, onDone }) {
     };
 
     tick();
-
     const timer = window.setInterval(tick, 1000);
-
     return () => window.clearInterval(timer);
   }, [nextClaimAt, serverTime, onDone]);
 
   const totalSeconds = Math.floor(remaining / 1000);
-  const hours = String(
-    Math.floor(totalSeconds / 3600)
-  ).padStart(2, "0");
-
-  const minutes = String(
-    Math.floor((totalSeconds % 3600) / 60)
-  ).padStart(2, "0");
-
+  const hours = String(Math.floor(totalSeconds / 3600)).padStart(2, "0");
+  const minutes = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, "0");
   const seconds = String(totalSeconds % 60).padStart(2, "0");
 
-  return <span>{hours}:{minutes}:{seconds}</span>;
-}
-
-function StreakSkeleton() {
   return (
-    <div className="container py-4 py-lg-5">
-      <div className={styles.skeletonHero}>
-        <div className={styles.skeletonPanel}>
-          <span className={styles.skeletonLineSmall} />
-          <span className={styles.skeletonLineLarge} />
-          <span className={styles.skeletonLine} />
-          <span className={styles.skeletonLineShort} />
-
-          <div className={styles.skeletonStats}>
-            <span />
-            <span />
-            <span />
-          </div>
-        </div>
-
-        <div className={styles.skeletonPanel} />
-      </div>
-
-      <div className={styles.skeletonHeading} />
-
-      <div className={styles.skeletonGrid}>
-        {Array.from({ length: 7 }).map((_, index) => (
-          <div
-            key={index}
-            className={styles.skeletonCard}
-          />
-        ))}
-      </div>
-    </div>
+    <span className={styles.countdownValue}>
+      <span>{hours}</span>:<span>{minutes}</span>:<span>{seconds}</span>
+    </span>
   );
 }
 
@@ -147,40 +100,47 @@ export default function DailyStreakPage() {
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(true);
   const [claiming, setClaiming] = useState(false);
-  const [cpa, setCpa] = useState(false);
   const [error, setError] = useState("");
   const [accountMenuOpen, setAccountMenuOpen] = useState(false);
+  const [walletModalOpen, setWalletModalOpen] = useState(false);
+
+  // Claim Success Modal & Celebration
+  const [claimedReward, setClaimedReward] = useState(null);
+  const [showConfetti, setShowConfetti] = useState(false);
+
+  const menuRef = useRef(null);
+
+  // Close account menu on click outside
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setAccountMenuOpen(false);
+      }
+    }
+    if (accountMenuOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [accountMenuOpen]);
 
   const load = useCallback(async ({ quiet = false } = {}) => {
     try {
       if (!quiet) setError("");
 
-      const [
-        streakResponse,
-        walletResponse,
-        historyResponse
-      ] = await Promise.all([
+      const [streakResponse, walletResponse, historyResponse] = await Promise.all([
         getStreak(),
         getWallet(),
         getHistory()
       ]);
 
       const streakData = streakResponse.data;
-
       setData(streakData);
-
-      setWallet(
-        streakData.wallet ||
-        walletResponse.data.wallet ||
-        null
-      );
-
+      setWallet(streakData.wallet || walletResponse.data.wallet || null);
       setHistory(historyResponse.data.history || []);
     } catch (err) {
-      setError(
-        err.response?.data?.message ||
-        "Unable to load your streak."
-      );
+      setError(err.response?.data?.message || "Unable to load your streak information.");
     } finally {
       setLoading(false);
     }
@@ -197,22 +157,22 @@ export default function DailyStreakPage() {
     setError("");
 
     try {
-      setCpa(true);
+      const response = await claimStreak();
+      const claimResult = response.data;
 
-      // Demo verification animation.
-      await new Promise((resolve) => setTimeout(resolve, 900));
+      // Real backend confirmation verified!
+      setClaimedReward({
+        reward: claimResult.reward,
+        day: claimResult.reward?.day || data?.streak?.currentDay || 1
+      });
+      setShowConfetti(true);
 
-      await claimStreak();
+      // Refresh real balances quietly in background
       await load({ quiet: true });
     } catch (err) {
-      setError(
-        err.response?.data?.message ||
-        "Unable to process your reward."
-      );
-
+      setError(err.response?.data?.message || "Unable to process your reward.");
       await load({ quiet: true });
     } finally {
-      setCpa(false);
       setClaiming(false);
     }
   }
@@ -222,24 +182,19 @@ export default function DailyStreakPage() {
     navigate("/login");
   }
 
-  const handleTimerDone = useCallback(
-    () => load({ quiet: true }),
-    [load]
-  );
+  const handleTimerDone = useCallback(() => load({ quiet: true }), [load]);
 
   if (loading) {
     return (
-      <div className={styles.page}>
-        <div className={styles.brandLoader}>
-          <div className={styles.loaderMark}>
-            <Sparkles size={30} />
+      <div className={styles.loadingScreen}>
+        <div className={styles.loadingBox}>
+          <div className={styles.loadingLogo}>
+            <Sparkles size={28} className={styles.pulseIcon} />
           </div>
-
-          <strong>VELoop Rewards</strong>
-          <span>Loading your streak...</span>
-
-          <div className={styles.loaderBar}>
-            <span />
+          <strong className={styles.loadingTitle}>VELOOP REWARDS</strong>
+          <span className={styles.loadingSubtitle}>Verifying your streak & balance...</span>
+          <div className={styles.loadingProgressBar}>
+            <div className={styles.loadingProgressFill} />
           </div>
         </div>
       </div>
@@ -249,20 +204,14 @@ export default function DailyStreakPage() {
   if (!data) {
     return (
       <div className={styles.page}>
-        <div className="container py-5">
-          <div className={styles.errorState}>
-            <ShieldCheck size={28} />
-
-            <h2>We couldn't load your streak</h2>
-
-            <p>{error || "Please try again."}</p>
-
-            <button
-              className={styles.claimButton}
-              onClick={() => load()}
-            >
+        <div className={styles.errorContainer}>
+          <div className={styles.errorCard}>
+            <ShieldCheck size={36} color="#f43f5e" />
+            <h2>Unable to Load Streak</h2>
+            <p>{error || "We couldn't connect to the rewards server. Please check your connection and retry."}</p>
+            <button className={styles.retryBtn} onClick={() => load()}>
               <RefreshCw size={16} />
-              Retry
+              <span>Retry</span>
             </button>
           </div>
         </div>
@@ -271,112 +220,137 @@ export default function DailyStreakPage() {
   }
 
   const completed = data.streak.status === "COMPLETED";
-
-  const progress = Math.min(
-    100,
-    (data.streak.checkedIn / data.streak.totalRewards) * 100
-  );
-
+  const progressPercent = Math.min(100, Math.round((data.streak.checkedIn / data.streak.totalRewards) * 100));
   const displayUser = user || data.user;
 
   return (
     <div className={styles.page}>
-      <div className={styles.backgroundGlow} />
+      {/* Confetti Particle System */}
+      <ConfettiCanvas active={showConfetti} onComplete={() => setShowConfetti(false)} />
 
-      <img
-        className={styles.topLeftArt}
-        src={topLeftAsset}
-        alt=""
-        aria-hidden="true"
+      {/* Claim Success Celebration Modal */}
+      {claimedReward && (
+        <ClaimSuccessModal
+          reward={claimedReward.reward}
+          streakDay={claimedReward.day}
+          onClose={() => setClaimedReward(null)}
+        />
+      )}
+
+      {/* Full-featured Wallet Modal */}
+      <WalletModal
+        isOpen={walletModalOpen}
+        onClose={() => setWalletModalOpen(false)}
+        wallet={wallet}
+        onRefresh={() => load({ quiet: true })}
       />
 
-      <img
-        className={styles.topRightArt}
-        src={topRightAsset}
-        alt=""
-        aria-hidden="true"
-      />
+      {/* Background Ambient Glow Orbs */}
+      <div className={`${styles.ambientGlow} ${styles.glowViolet}`} aria-hidden="true" />
+      <div className={`${styles.ambientGlow} ${styles.glowCyan}`} aria-hidden="true" />
 
-      {/* NAVBAR */}
-      <header className={styles.header}>
-        <div className="container d-flex align-items-center justify-content-between gap-3">
-          <button
-            className={styles.backButton}
-            type="button"
-            onClick={() => navigate(-1)}
-          >
-            <ArrowLeft size={18} />
-            <span>Daily Streak</span>
-          </button>
-
-          <div className={styles.headerRight}>
-            {/* Wallet balance */}
-            <div
-              className={styles.walletPill}
-              title="Backend wallet balance"
-            >
-              <img src={vesCoin} alt="VES" />
-
-              <span>
-                {wallet?.vesBalance ?? 0} VES
-              </span>
+      {/* TOPBAR / HEADER NAVIGATION */}
+      <header className={styles.navbar}>
+        <div className={styles.navbarContainer}>
+          {/* Brand Mark */}
+          <div className={styles.brandGroup}>
+            <div className={styles.brandLogo}>V</div>
+            <div className={styles.brandDetails}>
+              <span className={styles.brandTitle}>VELOOP</span>
+              <span className={styles.brandBadge}>REWARDS</span>
             </div>
+          </div>
 
-            {/* Compact streak indicator */}
+          {/* Quick Header Indicators */}
+          <div className={styles.navRightGroup}>
+            {/* Wallet Balance Pill - Clickable to open full Ledger & Balances */}
+            <button
+              type="button"
+              className={styles.walletPill}
+              onClick={() => setWalletModalOpen(true)}
+              title="Click to view digital wallet & transaction history"
+              aria-label="Open wallet modal"
+            >
+              <div className={styles.walletCoinIcon}>
+                <img src={vesCoin} alt="" aria-hidden="true" />
+              </div>
+              <div className={styles.walletPillText}>
+                <strong>{(wallet?.vesBalance ?? 0).toLocaleString()} VES</strong>
+                {(wallet?.amazonGiftCardBalanceInr ?? 0) > 0 && (
+                  <span className={styles.giftBadge}>₹{wallet?.amazonGiftCardBalanceInr}</span>
+                )}
+              </div>
+            </button>
+
+            {/* Streak Pill */}
             <div
               className={styles.streakPill}
+              title={`${data.streak.currentStreak} day consecutive streak`}
               aria-label={`${data.streak.currentStreak} day streak`}
-              title={`${data.streak.currentStreak} day streak`}
             >
-              <img
-                src={flameAsset}
-                alt=""
-                aria-hidden="true"
-              />
-
-              <span>{data.streak.currentStreak}</span>
+              <Flame size={16} className={styles.flameIcon} />
+              <span>{data.streak.currentStreak}d</span>
             </div>
 
-            {/* Account menu */}
-            <div className={styles.accountMenuWrap}>
+            {/* User Account Menu with Click-Outside Ref */}
+            <div className={styles.accountMenuWrap} ref={menuRef}>
               <button
-                className={styles.accountButton}
                 type="button"
-                onClick={() =>
-                  setAccountMenuOpen((open) => !open)
-                }
-                aria-label="Account menu"
+                className={`${styles.accountBtn} ${accountMenuOpen ? styles.accountBtnActive : ""}`}
+                onClick={() => setAccountMenuOpen((prev) => !prev)}
                 aria-expanded={accountMenuOpen}
-                aria-haspopup="menu"
-                title="Account"
+                aria-haspopup="true"
+                aria-label="Account options menu"
               >
-                <UserRound size={18} />
+                <div className={styles.avatarCircle}>
+                  {displayUser?.name ? displayUser.name.charAt(0).toUpperCase() : <UserRound size={16} />}
+                </div>
+                <ChevronDown size={14} className={styles.chevronIcon} />
               </button>
 
               {accountMenuOpen && (
-                <div
-                  className={styles.accountPopover}
-                  role="menu"
-                >
-                  <span className={styles.accountLabel}>
-                    SIGNED IN AS
-                  </span>
+                <div className={styles.accountDropdown} role="menu">
+                  <div className={styles.dropdownHeader}>
+                    <span className={styles.signedInLabel}>SIGNED IN AS</span>
+                    <strong className={styles.userFullName}>{displayUser?.name || "Reward Member"}</strong>
+                    <span className={styles.userEmail}>{displayUser?.email}</span>
+                  </div>
 
-                  <strong className={styles.accountEmail}>
-                    {displayUser?.email || "Email unavailable"}
-                  </strong>
+                  <div className={styles.dropdownStats}>
+                    <div className={styles.dropdownStatItem}>
+                      <span>Streak</span>
+                      <strong>{data.streak.currentStreak} Days</strong>
+                    </div>
+                    <div className={styles.dropdownStatItem}>
+                      <span>Cycle</span>
+                      <strong>{data.streak.checkedIn}/7</strong>
+                    </div>
+                  </div>
+
+                  <div className={styles.dropdownDivider} />
 
                   <button
-                    className={styles.accountLogout}
                     type="button"
-                    role="menuitem"
+                    className={styles.dropdownAction}
+                    onClick={() => {
+                      setAccountMenuOpen(false);
+                      setWalletModalOpen(true);
+                    }}
+                  >
+                    <WalletIcon size={15} />
+                    <span>View Wallet &amp; Ledger</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    className={`${styles.dropdownAction} ${styles.logoutAction}`}
                     onClick={() => {
                       setAccountMenuOpen(false);
                       handleLogout();
                     }}
                   >
-                    <LogOut size={16} />
-                    Log out
+                    <LogOut size={15} />
+                    <span>Log Out</span>
                   </button>
                 </div>
               )}
@@ -385,449 +359,445 @@ export default function DailyStreakPage() {
         </div>
       </header>
 
-      <main className="container py-4 py-lg-5">
+      {/* MAIN CONTAINER */}
+      <main className={styles.mainContent}>
+        {/* Error Alert Banner */}
         {error && (
-          <div className={styles.errorBox} role="alert">
-            <span>{error}</span>
-
+          <div className={styles.alertBanner} role="alert">
+            <div className={styles.alertLeft}>
+              <AlertTriangle size={18} color="#f43f5e" />
+              <span>{error}</span>
+            </div>
             <button
               type="button"
+              className={styles.alertRetryBtn}
               onClick={() => load({ quiet: true })}
               aria-label="Retry loading"
             >
-              <RefreshCw size={15} />
+              <RefreshCw size={14} />
+              <span>Retry</span>
             </button>
           </div>
         )}
 
+        {/* Streak Reset Notice */}
         {data.streak.wasReset && (
-          <div className={styles.resetBox} role="status">
-            <div className={styles.resetIcon}>
-              <RefreshCw size={16} />
+          <div className={styles.resetBanner} role="status">
+            <div className={styles.resetIconWrap}>
+              <RefreshCw size={18} />
             </div>
-
-            <div>
-              <strong>Your streak has been reset</strong>
-
-              <span>
-                The required claim window was missed.
-                Day 1 is available again.
-              </span>
+            <div className={styles.resetTextWrap}>
+              <strong>Streak Cycle Reset to Day 1</strong>
+              <p>The 24-hour claim window was missed. Day 1 is now available to restart your streak!</p>
             </div>
           </div>
         )}
 
         {/* HERO SECTION */}
-        <section className={styles.hero}>
-          <div className={styles.heroCopy}>
-            <div className={styles.heroArt}>
-              <picture>
-                <source
-                  media="(max-width: 600px)"
-                  srcSet={mobileHero}
-                />
+        <section className={styles.heroSection}>
+          <div className={styles.heroMainCard}>
+            <div className={styles.heroHeaderRow}>
+              <div className={styles.heroEyebrowGroup}>
+                <span className={styles.eyebrowTag}>
+                  <Sparkles size={13} />
+                  DAILY CHECK-IN • CYCLE MILESTONE
+                </span>
+                {completed ? (
+                  <span className={styles.statusCompleteTag}>7-DAY CYCLE COMPLETED</span>
+                ) : (
+                  <span className={styles.statusActiveTag}>
+                    DAY {data.streak.currentDay} {data.rewards.find((r) => r.day === data.streak.currentDay)?.status === "AVAILABLE" ? "READY" : "ACTIVE"}
+                  </span>
+                )}
+              </div>
 
-                <img
-                  src={biggerStreak}
-                  alt="Daily streak rewards"
-                />
-              </picture>
+              <div className={styles.serverVerifiedBadge}>
+                <ShieldCheck size={14} />
+                <span>Server Verified</span>
+              </div>
             </div>
 
-            <p className="eyebrow">
-              DAILY CHECK-IN • VELoop REWARDS
-            </p>
-
-            <h1>
+            <h1 className={styles.heroTitle}>
               Keep your streak.
-              <br />
-              <span>Unlock more.</span>
+              <span className={styles.heroHighlight}> Unlock more.</span>
             </h1>
 
-            <p className={styles.heroText}>
-              Check in every day, protect your streak,
-              and unlock rewards that grow as you progress.
+            <p className={styles.heroSubtitle}>
+              Check in consecutively to accumulate VES loyalty tokens and unlock guaranteed Amazon gift cards.
             </p>
 
-            <div className={styles.progressWrap}>
-              <div className={styles.progressLabel}>
-                <span>
-                  Day{" "}
-                  {Math.min(
-                    data.streak.totalRewards,
-                    Math.max(1, data.streak.checkedIn)
-                  )}{" "}
-                  of {data.streak.totalRewards}
+            {/* Stepper / Progress Rail across 7 Days */}
+            <div className={styles.stepperContainer}>
+              <div className={styles.stepperHeader}>
+                <span className={styles.stepperLabel}>
+                  Milestone Progress: Day {Math.min(7, Math.max(1, data.streak.checkedIn))} of {data.streak.totalRewards}
                 </span>
-
-                <strong>
-                  {data.streak.checkedIn}/{data.streak.totalRewards}
-                </strong>
+                <span className={styles.stepperCount}>
+                  <strong>{data.streak.checkedIn}</strong> / 7 Days ({progressPercent}%)
+                </span>
               </div>
 
-              <div className={styles.progressTrack}>
-                <span style={{ width: `${progress}%` }} />
+              {/* Connected Milestone Rail */}
+              <div className={styles.milestoneRail}>
+                <div className={styles.railTrack}>
+                  <div className={styles.railFill} style={{ width: `${progressPercent}%` }} />
+                </div>
+
+                <div className={styles.stepperNodes}>
+                  {data.rewards.map((r) => {
+                    const isClaimed = r.status === "CLAIMED";
+                    const isCurrent = r.day === data.streak.currentDay;
+                    const isUltimate = r.day === 7;
+
+                    return (
+                      <div
+                        key={r.day}
+                        className={`${styles.stepperNode} ${isClaimed ? styles.nodeClaimed : ""} ${isCurrent ? styles.nodeCurrent : ""} ${isUltimate ? styles.nodeUltimate : ""}`}
+                        title={`Day ${r.day}: ${r.status}`}
+                      >
+                        <div className={styles.nodeCircle}>
+                          {isClaimed ? <Check size={12} strokeWidth={3} /> : <span>{r.day}</span>}
+                        </div>
+                        <span className={styles.nodeDayText}>D{r.day}</span>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
             </div>
 
+            {/* Countdown Banner if awaiting claim window */}
             {!completed && data.streak.nextClaimAt && (
-              <div className={styles.heroCountdown}>
-                <div>
-                  <span>NEXT REWARD IN</span>
-                  <strong>
-                    Day {data.streak.currentDay}
-                  </strong>
+              <div className={styles.countdownBanner}>
+                <div className={styles.countdownInfo}>
+                  <span className={styles.countdownLabel}>NEXT REWARD WINDOW</span>
+                  <strong className={styles.countdownDay}>Day {data.streak.currentDay} Check-In</strong>
                 </div>
-
-                <b>
+                <div className={styles.countdownBox}>
+                  <Clock3 size={16} className={styles.countdownClockIcon} />
                   <Countdown
                     nextClaimAt={data.streak.nextClaimAt}
                     serverTime={data.serverTime}
                     onDone={handleTimerDone}
                   />
-                </b>
+                </div>
               </div>
             )}
 
-            <div className={styles.statsRow}>
-              <div className={styles.stat}>
-                <span>Current Streak</span>
-                <strong>
-                  {data.streak.currentStreak} days
-                </strong>
+            {/* 3 Metric Cards */}
+            <div className={styles.statsGrid}>
+              <div className={styles.statCard}>
+                <div className={styles.statIconWrap}>
+                  <Flame size={18} color="#f59e0b" />
+                </div>
+                <div>
+                  <span className={styles.statLabel}>Current Streak</span>
+                  <strong className={styles.statValue}>{data.streak.currentStreak} Days</strong>
+                </div>
               </div>
 
-              <div className={styles.stat}>
-                <span>Next Reward</span>
-                <strong>
-                  {completed
-                    ? "Completed"
-                    : formatReward(data.nextReward)}
-                </strong>
+              <div className={styles.statCard}>
+                <div className={styles.statIconWrap}>
+                  <Award size={18} color="#8b5cf6" />
+                </div>
+                <div>
+                  <span className={styles.statLabel}>Next Reward</span>
+                  <strong className={styles.statValue}>
+                    {completed ? "Completed!" : formatReward(data.nextReward)}
+                  </strong>
+                </div>
               </div>
 
-              <div className={styles.stat}>
-                <span>VES Balance</span>
-                <strong>{wallet?.vesBalance ?? 0}</strong>
+              <div
+                className={`${styles.statCard} ${styles.statCardClickable}`}
+                onClick={() => setWalletModalOpen(true)}
+                title="Open wallet ledger"
+                role="button"
+                tabIndex={0}
+              >
+                <div className={styles.statIconWrap}>
+                  <WalletIcon size={18} color="#06b6d4" />
+                </div>
+                <div>
+                  <span className={styles.statLabel}>Total Balance</span>
+                  <strong className={styles.statValue}>
+                    {(wallet?.vesBalance ?? 0).toLocaleString()} VES
+                  </strong>
+                </div>
               </div>
             </div>
           </div>
 
-          {/* ULTIMATE REWARD */}
-          <div className={styles.ultimate}>
-            <div className={styles.ultimateHalo} />
-
-            <div className={styles.ultimateIcon}>
-              <img
-                src={day7Asset}
-                alt="Day 7 ultimate reward"
-              />
+          {/* DAY 7 ULTIMATE SPOTLIGHT CARD */}
+          <div className={styles.ultimateCard}>
+            <div className={styles.ultimateShimmer} aria-hidden="true" />
+            <div className={styles.ultimateTopBadge}>
+              <Sparkles size={13} />
+              <span>ULTIMATE MILESTONE</span>
             </div>
 
-            <span className={styles.dayBadge}>
-              DAY {data.ultimateReward?.day}
-            </span>
-
-            <p>ULTIMATE REWARD</p>
-
-            <h2>
-              {data.ultimateReward?.currency === "INR"
-                ? "₹"
-                : "+"}
-              {data.ultimateReward?.amount}
-            </h2>
-
-            <small>
-              {data.ultimateReward?.subtitle}
-            </small>
-
-            <div className={styles.unlock}>
-              {completed
-                ? "Cycle completed"
-                : `Unlock on Day ${data.ultimateReward?.day}`}
+            <div className={styles.ultimateIconWrap}>
+              <img src={day7Asset} alt="Day 7 Ultimate Reward Crown" />
             </div>
-          </div>
-        </section>
 
-        {/* DAILY REWARDS */}
-        <section className={styles.sectionHeading}>
-          <div>
-            <p className="eyebrow">YOUR PROGRESS</p>
-            <h2>Daily Rewards</h2>
-            <p>
-              Every status below is calculated by the backend.
+            <div className={styles.ultimateBadgeDay}>DAY 7 REWARD</div>
+
+            <h3 className={styles.ultimateAmount}>
+              {data.ultimateReward?.currency === "INR" ? "₹" : "+"}
+              {data.ultimateReward?.amount} Amazon Voucher
+            </h3>
+
+            <p className={styles.ultimateSubtitle}>
+              {data.ultimateReward?.subtitle || "Guaranteed ₹5 Amazon Gift Card credited directly."}
             </p>
-          </div>
 
-          <div className={styles.serverBadge}>
-            <ShieldCheck size={16} />
-            Server verified
-          </div>
-        </section>
-
-        <section className={styles.rewardGrid}>
-          {data.rewards.map((reward) => (
-            <article
-              key={reward.day}
-              className={[
-                styles.rewardCard,
-                reward.status === "AVAILABLE"
-                  ? styles.available
-                  : "",
-                reward.status === "CLAIMED"
-                  ? styles.claimed
-                  : "",
-                reward.status === "MISSED"
-                  ? styles.missed
-                  : "",
-                reward.day === 7
-                  ? styles.daySeven
-                  : ""
-              ].filter(Boolean).join(" ")}
-            >
-              <div className={styles.cardTop}>
-                <span className={styles.dayBadge}>
-                  DAY {reward.day}
-                </span>
-
-                {reward.status === "AVAILABLE" && (
-                  <span className={styles.todayBadge}>
-                    TODAY
-                  </span>
-                )}
-
-                {reward.status === "CLAIMED" && (
-                  <span className={styles.claimedBadge}>
-                    DONE
-                  </span>
-                )}
-              </div>
-
-              <div className={styles.rewardIcon}>
-                {reward.day === 4 ? (
-                  <img
-                    src={day4Asset}
-                    alt="Day 4 gift card reward"
-                  />
-                ) : reward.day === 5 ? (
-                  <img
-                    src={day5Asset}
-                    alt="Day 5 gift card reward"
-                  />
-                ) : reward.day === 7 ? (
-                  <img
-                    src={day7Asset}
-                    alt="Day 7 crown reward"
-                  />
-                ) : (
-                  <img src={vesCoin} alt="VES reward" />
-                )}
-              </div>
-
-              <p className={styles.rewardTitle}>
-                {reward.reward.title}
-              </p>
-
-              <h3>
-                {reward.reward.currency === "INR" ? "₹" : "+"}
-                {reward.reward.amount}
-              </h3>
-
-              <span className={styles.rewardSub}>
-                {reward.reward.subtitle}
-              </span>
-
-              <div className={styles.cardAction}>
-                {reward.status === "CLAIMED" && (
-                  <span className={styles.claimedText}>
-                    <Check size={15} />
-                    Claimed
-                  </span>
-                )}
-
-                {reward.status === "LOCKED" && (
-                  <span className={styles.lockedText}>
-                    <Lock size={15} />
-                    Locked
-                  </span>
-                )}
-
-                {reward.status === "MISSED" && (
-                  <span className={styles.lockedText}>
-                    <Clock3 size={15} />
-                    Missed
-                  </span>
-                )}
-
-                {reward.status === "AVAILABLE" && (
-                  <button
-                    className={styles.claimButton}
-                    disabled={claiming}
-                    onClick={handleClaim}
-                  >
-                    {claiming
-                      ? "Processing..."
-                      : "Claim Reward"}
-
-                    {!claiming && <span>→</span>}
-                  </button>
-                )}
-
-                {reward.day === data.streak.currentDay &&
-                  reward.status === "LOCKED" &&
-                  data.streak.nextClaimAt && (
-                    <div className={styles.timer}>
-                      <small>NEXT REWARD IN</small>
-
-                      <strong>
-                        <Countdown
-                          nextClaimAt={data.streak.nextClaimAt}
-                          serverTime={data.serverTime}
-                          onDone={handleTimerDone}
-                        />
-                      </strong>
-                    </div>
-                  )}
-              </div>
-            </article>
-          ))}
-        </section>
-
-        {/* INFORMATION CARDS */}
-        <section className={styles.infoGrid}>
-          <div>
-            <img src={stayActive} alt="Stay active" />
-
-            <span>
-              <strong>Stay Active</strong>
-              Keep checking in consecutively to unlock
-              the next reward.
-            </span>
-          </div>
-
-          <div>
-            <img
-              src={exclusiveReward}
-              alt="Exclusive rewards"
-            />
-
-            <span>
-              <strong>Exclusive Rewards</strong>
-              Earn VES and gift-card rewards through
-              the backend wallet.
-            </span>
-          </div>
-
-          <div>
-            <img src={trustAsset} alt="Secure rewards" />
-
-            <span>
-              <strong>Protected Claims</strong>
-              Day, reward and eligibility are validated
-              server-side.
-            </span>
+            <div className={`${styles.ultimateStatusPill} ${completed ? styles.ultimateCompletedPill : ""}`}>
+              {completed ? "7-Day Milestone Completed" : `Unlocks on Day 7 (${7 - (data.streak.checkedIn || 0)} check-ins away)`}
+            </div>
           </div>
         </section>
 
-        {/* CLAIM HISTORY */}
-        <section className={styles.historySection}>
-          <div className={styles.historyHeading}>
+        {/* 7 DAILY REWARDS GRID */}
+        <section className={styles.rewardsSection}>
+          <div className={styles.sectionHeader}>
             <div>
-              <p className="eyebrow">ACTIVITY</p>
-              <h2>Recent Claims</h2>
+              <span className={styles.sectionEyebrow}>7-DAY ROADMAP</span>
+              <h2 className={styles.sectionTitle}>Daily Rewards Cycle</h2>
+              <p className={styles.sectionDesc}>
+                All eligibility and reward transactions are strictly verified by the backend.
+              </p>
+            </div>
+          </div>
+
+          <div className={styles.rewardGrid}>
+            {data.rewards.map((reward) => {
+              const isAvailable = reward.status === "AVAILABLE";
+              const isClaimed = reward.status === "CLAIMED";
+              const isMissed = reward.status === "MISSED";
+              const isLocked = reward.status === "LOCKED";
+              const isDay7 = reward.day === 7;
+
+              const getAsset = () => {
+                if (reward.day === 4) return day4Asset;
+                if (reward.day === 5) return day5Asset;
+                if (reward.day === 7) return day7Asset;
+                return vesCoin;
+              };
+
+              return (
+                <article
+                  key={reward.day}
+                  className={`
+                    ${styles.rewardCard}
+                    ${isAvailable ? styles.cardAvailable : ""}
+                    ${isClaimed ? styles.cardClaimed : ""}
+                    ${isMissed ? styles.cardMissed : ""}
+                    ${isLocked ? styles.cardLocked : ""}
+                    ${isDay7 ? styles.cardDaySeven : ""}
+                  `}
+                >
+                  {/* Card Header */}
+                  <div className={styles.cardHeader}>
+                    <span className={`${styles.dayTag} ${isDay7 ? styles.dayTagGold : ""}`}>
+                      DAY {reward.day}
+                    </span>
+
+                    {isAvailable && <span className={styles.todayPill}>READY</span>}
+                    {isClaimed && (
+                      <span className={styles.claimedPill}>
+                        <Check size={12} strokeWidth={3} />
+                        CLAIMED
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Asset Icon */}
+                  <div className={styles.rewardArtWrap}>
+                    <img
+                      src={getAsset()}
+                      alt={`Day ${reward.day} reward`}
+                      className={`${styles.rewardArtImg} ${isDay7 ? styles.artDay7 : ""}`}
+                    />
+                  </div>
+
+                  {/* Reward Meta */}
+                  <div className={styles.rewardMeta}>
+                    <span className={styles.rewardTitleText}>{reward.reward.title}</span>
+                    <strong className={`${styles.rewardAmountText} ${isDay7 ? styles.textGold : ""}`}>
+                      {reward.reward.currency === "INR" ? "₹" : "+"}
+                      {reward.reward.amount}
+                      <span className={styles.rewardUnit}>
+                        {reward.reward.currency === "VES" ? " VES" : " INR"}
+                      </span>
+                    </strong>
+                    <span className={styles.rewardSubtitleText}>{reward.reward.subtitle}</span>
+                  </div>
+
+                  {/* Card Action / Status */}
+                  <div className={styles.cardFooterArea}>
+                    {isClaimed && (
+                      <div className={styles.statusBoxClaimed}>
+                        <Check size={14} strokeWidth={2.5} />
+                        <span>Completed</span>
+                      </div>
+                    )}
+
+                    {isLocked && !isAvailable && (
+                      <div className={styles.statusBoxLocked}>
+                        <Lock size={14} />
+                        <span>
+                          {reward.day === data.streak.currentDay && data.streak.nextClaimAt ? (
+                            <Countdown
+                              nextClaimAt={data.streak.nextClaimAt}
+                              serverTime={data.serverTime}
+                              onDone={handleTimerDone}
+                            />
+                          ) : (
+                            `Unlocks Day ${reward.day}`
+                          )}
+                        </span>
+                      </div>
+                    )}
+
+                    {isMissed && (
+                      <div className={styles.statusBoxMissed}>
+                        <Clock3 size={14} />
+                        <span>Missed</span>
+                      </div>
+                    )}
+
+                    {isAvailable && (
+                      <button
+                        type="button"
+                        className={styles.claimRewardBtn}
+                        onClick={handleClaim}
+                        disabled={claiming}
+                      >
+                        {claiming ? (
+                          <>
+                            <RefreshCw size={15} className={styles.spin} />
+                            <span>Claiming...</span>
+                          </>
+                        ) : (
+                          <>
+                            <span>Claim Reward</span>
+                            <ArrowRight size={15} />
+                          </>
+                        )}
+                      </button>
+                    )}
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+        </section>
+
+        {/* SECURITY & BENEFIT PILLARS */}
+        <section className={styles.featuresSection}>
+          <div className={styles.featureCard}>
+            <div className={styles.featureIconWrap}>
+              <Flame size={22} color="#f59e0b" />
+            </div>
+            <div className={styles.featureText}>
+              <strong>Consecutive Streaks</strong>
+              <p>Check in every day to keep your streak intact. Missing a window resets the cycle to Day 1.</p>
+            </div>
+          </div>
+
+          <div className={styles.featureCard}>
+            <div className={styles.featureIconWrap}>
+              <Gift size={22} color="#8b5cf6" />
+            </div>
+            <div className={styles.featureText}>
+              <strong>Dual Rewards</strong>
+              <p>Collect platform VES coins on standard days and Amazon gift card vouchers on milestone days.</p>
+            </div>
+          </div>
+
+          <div className={styles.featureCard}>
+            <div className={styles.featureIconWrap}>
+              <ShieldCheck size={22} color="#10b981" />
+            </div>
+            <div className={styles.featureText}>
+              <strong>Server-Verified Claims</strong>
+              <p>All streak calculations, duplicate prevention, and balance updates are protected server-side.</p>
+            </div>
+          </div>
+        </section>
+
+        {/* RECENT CLAIMS ACTIVITY FEED */}
+        <section className={styles.historyCardSection}>
+          <div className={styles.historyCardHeader}>
+            <div className={styles.historyHeaderLeft}>
+              <History size={18} color="#a855f7" />
+              <div>
+                <h3>Recent Streak Activity</h3>
+                <p>Latest rewards credited to your account</p>
+              </div>
             </div>
 
-            <History size={20} />
+            <button
+              type="button"
+              className={styles.openLedgerBtn}
+              onClick={() => setWalletModalOpen(true)}
+            >
+              <span>View Full Ledger</span>
+              <ArrowRight size={14} />
+            </button>
           </div>
 
           {history.length === 0 ? (
-            <div className={styles.emptyHistory}>
-              Your completed claims will appear here.
+            <div className={styles.emptyHistoryState}>
+              <History size={32} className={styles.emptyHistIcon} />
+              <p>No completed claims recorded yet. Claim today's reward above to begin your ledger!</p>
             </div>
           ) : (
-            <div className={styles.historyList}>
-              {history.slice(0, 5).map((claim) => (
-                <div
-                  className={styles.historyItem}
-                  key={claim.claimId}
-                >
-                  <div className={styles.historyIcon}>
-                    <Check size={16} />
+            <div className={styles.historyItemsList}>
+              {history.slice(0, 5).map((claim) => {
+                const isGiftCard = claim.rewardId?.currency === "INR";
+                return (
+                  <div key={claim.claimId} className={styles.claimRow}>
+                    <div className={styles.claimRowLeft}>
+                      <div className={styles.claimCheckCircle}>
+                        <Check size={14} strokeWidth={2.5} />
+                      </div>
+                      <div className={styles.claimMeta}>
+                        <strong>
+                          Day {claim.day} Check-In • {claim.rewardId?.title || "Daily Streak Reward"}
+                        </strong>
+                        <span>{formatDate(claim.claimedAt)}</span>
+                      </div>
+                    </div>
+
+                    <div className={styles.claimRowRight}>
+                      <span className={`${styles.claimBadge} ${isGiftCard ? styles.claimBadgeGold : styles.claimBadgeViolet}`}>
+                        {isGiftCard ? `₹${claim.rewardId?.amount}` : `+${claim.rewardId?.amount} VES`}
+                      </span>
+                    </div>
                   </div>
-
-                  <div>
-                    <strong>
-                      Day {claim.day} •{" "}
-                      {claim.rewardId?.title || "Daily Reward"}
-                    </strong>
-
-                    <span>
-                      {formatDate(claim.claimedAt)}
-                    </span>
-                  </div>
-
-                  <b>
-                    {claim.rewardId?.currency === "INR"
-                      ? "₹"
-                      : "+"}
-                    {claim.rewardId?.amount}
-                    {claim.rewardId?.currency === "VES"
-                      ? " VES"
-                      : ""}
-                  </b>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </section>
       </main>
 
-      {/* DEMO VERIFICATION MODAL */}
-      {cpa && (
-        <div
-          className={styles.modalBackdrop}
-          role="status"
-          aria-live="polite"
-        >
-          <div className={styles.cpaModal}>
-            <div className={styles.cpaIcon}>
-              <Gift size={30} />
-            </div>
-
-            <p className="eyebrow">
-              REWARD VERIFICATION
-            </p>
-
-            <h2>Preparing your reward...</h2>
-
-            <p>
-              This demo state represents the future CPA
-              verification step.
-            </p>
-
-            <div className={styles.spinner} />
-          </div>
-        </div>
-      )}
-
       {/* FOOTER */}
       <footer className={styles.footer}>
-        <div className="container">
+        <div className={styles.footerInner}>
           <div className={styles.footerBrand}>
-            <img
-              src={trustAsset}
-              alt="VELoop Rewards"
-            />
-
-            <span>© VELoop Rewards</span>
+            <div className={styles.footerLogo}>V</div>
+            <div>
+              <strong>VELOOP REWARDS</strong>
+              <p>© {new Date().getFullYear()} VELOOP Technologies. All rewards strictly server verified.</p>
+            </div>
           </div>
 
-          <span>
-            Secure daily rewards experience
-            <br />
-            Secure &amp; Verified • Rewards are securely
-            processed through VELoop.
-          </span>
+          <div className={styles.footerSecurityBadge}>
+            <ShieldCheck size={16} />
+            <span>End-to-End Cryptographically Secured</span>
+          </div>
         </div>
       </footer>
     </div>
