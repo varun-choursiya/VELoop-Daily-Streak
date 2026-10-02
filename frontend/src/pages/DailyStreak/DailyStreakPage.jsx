@@ -277,7 +277,7 @@ export default function DailyStreakPage() {
     (data.streak.checkedIn / data.streak.totalRewards) * 100
   );
 
-  const displayUser = data.user || user;
+  const displayUser = user || data.user;
 
   return (
     <div className={styles.page}>
