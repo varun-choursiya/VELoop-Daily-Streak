@@ -740,7 +740,8 @@ export default function DailyStreakPage() {
               const isAvailable = r.status === "AVAILABLE";
               const isToday = r.day === streak.currentDay;
               const isDay7 = r.day === 7;
-              const isLocked = !isClaimed && !isAvailable;
+              const isTodayActive = isAvailable || (isToday && !isClaimed);
+              const isLocked = !isClaimed && !isAvailable && !isToday;
 
               // Card Asset selector
               const getCardAsset = () => {
@@ -759,7 +760,7 @@ export default function DailyStreakPage() {
                   key={r.day}
                   className={`
                     ${styles.rewardCard}
-                    ${isAvailable ? styles.cardTodayActive : ""}
+                    ${isTodayActive && !isDay7 ? styles.cardTodayActive : ""}
                     ${isClaimed ? styles.cardClaimed : ""}
                     ${isLocked ? styles.cardLocked : ""}
                     ${isDay7 ? styles.cardDay7Vip : ""}
@@ -776,24 +777,20 @@ export default function DailyStreakPage() {
                       </span>
                     )}
 
-                    {!isClaimed && isAvailable && (
+                    {!isClaimed && isToday && !isDay7 && (
                       <span className={styles.badgeToday}>Today</span>
                     )}
 
-                    {!isClaimed && !isAvailable && isDay7 && (
+                    {!isClaimed && isDay7 && (
                       <span className={styles.badgeVip}>VIP</span>
                     )}
 
-                    {!isClaimed && !isAvailable && !isDay7 && r.day === 5 && (
+                    {!isClaimed && !isToday && !isDay7 && r.day === 5 && (
                       <span className={styles.badgePurple}>Gift Card</span>
                     )}
 
-                    {!isClaimed && !isAvailable && !isDay7 && r.day === 6 && (
+                    {!isClaimed && !isToday && !isDay7 && r.day === 6 && (
                       <span className={styles.badgePurple}>Coin</span>
-                    )}
-
-                    {!isClaimed && !isAvailable && !isDay7 && isToday && (
-                      <span className={styles.badgeTodayPending}>Today</span>
                     )}
                   </div>
 
@@ -841,7 +838,7 @@ export default function DailyStreakPage() {
                       </div>
                     )}
 
-                    {isAvailable && (
+                    {!isClaimed && isAvailable && (
                       <button
                         type="button"
                         className={styles.buttonClaimActive}
@@ -864,7 +861,22 @@ export default function DailyStreakPage() {
                       </button>
                     )}
 
-                    {isLocked && (
+                    {!isClaimed && !isAvailable && isToday && (
+                      <div className={styles.buttonCountdown} title="Next claim window countdown">
+                        <Clock3 size={12} />
+                        {streak?.nextClaimAt ? (
+                          <Countdown
+                            nextClaimAt={streak.nextClaimAt}
+                            serverTime={data.serverTime}
+                            onDone={handleTimerDone}
+                          />
+                        ) : (
+                          <span>Available Soon</span>
+                        )}
+                      </div>
+                    )}
+
+                    {!isClaimed && !isAvailable && !isToday && (
                       <div className={styles.buttonLocked}>
                         <Lock size={12} />
                         <span>Locked</span>
