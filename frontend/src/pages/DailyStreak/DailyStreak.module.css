@@ -1,68 +1,47 @@
 /* ==========================================================================
-   VELOOP DAILY STREAK - REFINED FINTECH GAMIFICATION DESIGN SYSTEM
-   Dark Background + Purple/Violet Visual Language + Gold Highlights + Green Accents
+   VELOP DAILY STREAK - REDESIGNED REWARDS DASHBOARD
+   Matches Reference Image 1 (Desktop/Tablet) and Reference Image 2 (Mobile)
    ========================================================================== */
 
 .page {
   min-height: 100vh;
   width: 100%;
-  background-color: var(--bg-deep, #070913);
-  color: var(--text-primary, #f1f5f9);
+  background-color: #06040e;
+  background-image: 
+    radial-gradient(circle at 50% 0%, rgba(139, 92, 246, 0.12) 0%, transparent 60%),
+    radial-gradient(circle at 100% 50%, rgba(124, 58, 237, 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 0% 80%, rgba(147, 51, 234, 0.06) 0%, transparent 50%);
+  color: #f1f5f9;
   position: relative;
   overflow-x: hidden;
   display: flex;
   flex-direction: column;
+  padding-bottom: 40px;
 }
 
-/* Background Ambient Visual Artwork (Supplied Assets) */
-.topLeftArt {
-  position: absolute;
-  top: 0;
-  left: 0;
-  max-width: 440px;
-  width: 32vw;
-  pointer-events: none;
-  opacity: 0.38;
-  z-index: 0;
-  user-select: none;
-}
-
-.topRightArt {
-  position: absolute;
-  top: 0;
-  right: 0;
-  max-width: 460px;
-  width: 34vw;
-  pointer-events: none;
-  opacity: 0.38;
-  z-index: 0;
-  user-select: none;
-}
-
-/* Background Ambient Orbs */
+/* Ambient Radial Background Glows */
 .ambientGlow {
   position: absolute;
   border-radius: 50%;
   pointer-events: none;
-  filter: blur(140px);
+  filter: blur(120px);
   z-index: 0;
-  opacity: 0.45;
 }
 
-.glowViolet {
-  width: 550px;
-  height: 550px;
-  top: -80px;
-  right: -80px;
-  background: radial-gradient(circle, rgba(139, 92, 246, 0.22) 0%, transparent 70%);
+.glowVioletTop {
+  width: 500px;
+  height: 500px;
+  top: -150px;
+  right: 10%;
+  background: radial-gradient(circle, rgba(168, 85, 247, 0.22) 0%, transparent 70%);
 }
 
-.glowCyan {
-  width: 480px;
-  height: 480px;
-  top: 420px;
-  left: -120px;
-  background: radial-gradient(circle, rgba(124, 58, 237, 0.16) 0%, transparent 70%);
+.glowGoldCenter {
+  width: 450px;
+  height: 450px;
+  top: 40%;
+  left: -100px;
+  background: radial-gradient(circle, rgba(245, 158, 11, 0.1) 0%, transparent 70%);
 }
 
 /* ==========================================================================
@@ -72,7 +51,7 @@
   min-height: 100vh;
   display: grid;
   place-items: center;
-  background: var(--bg-deep, #070913);
+  background: #06040e;
   padding: 24px;
 }
 
@@ -92,7 +71,7 @@
   border: 1px solid rgba(168, 85, 247, 0.4);
   display: grid;
   place-items: center;
-  color: var(--violet-light, #c084fc);
+  color: #c084fc;
   box-shadow: 0 0 30px rgba(168, 85, 247, 0.3);
   margin-bottom: 8px;
 }
@@ -116,7 +95,7 @@
 
 .loadingSubtitle {
   font-size: 13.5px;
-  color: var(--text-secondary, #94a3b8);
+  color: #94a3b8;
 }
 
 .loadingProgressBar {
@@ -150,1942 +129,1600 @@
 
 .errorCard {
   max-width: 440px;
-  padding: 36px 28px;
-  background: rgba(18, 14, 34, 0.85);
+  background: #0f0a24;
   border: 1px solid rgba(244, 63, 94, 0.3);
-  border-radius: 24px;
+  border-radius: 20px;
+  padding: 32px 24px;
   text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
+  gap: 14px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
 }
 
 .errorCard h2 {
+  font-family: var(--font-display, 'Outfit', sans-serif);
   font-size: 20px;
-  font-weight: 700;
-  color: #fff;
+  color: #ffffff;
 }
 
 .errorCard p {
   font-size: 14px;
-  color: var(--text-secondary, #94a3b8);
+  color: #94a3b8;
   line-height: 1.5;
 }
 
 .retryBtn {
+  margin-top: 8px;
   display: inline-flex;
   align-items: center;
   gap: 8px;
+  background: linear-gradient(135deg, #a855f7, #7c3aed);
+  border: none;
+  border-radius: 10px;
   padding: 10px 20px;
-  border-radius: 12px;
-  background: rgba(244, 63, 94, 0.15);
-  border: 1px solid rgba(244, 63, 94, 0.35);
-  color: #fecdd3;
-  font-weight: 600;
+  color: #fff;
   font-size: 14px;
-  margin-top: 8px;
-  transition: all 0.2s ease;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 150ms ease;
 }
 
 .retryBtn:hover {
-  background: rgba(244, 63, 94, 0.25);
+  filter: brightness(1.1);
   transform: translateY(-1px);
 }
 
 /* ==========================================================================
-   NAVBAR / HEADER (Back Navigation, Title, Streak Pill, Balance, Account)
+   TOP NAVIGATION / HEADER
    ========================================================================== */
-.navbar {
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-  background: rgba(8, 7, 18, 0.88);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(168, 85, 247, 0.14);
-  height: 68px;
-  display: flex;
-  align-items: center;
+.topNavbar {
+  width: 100%;
+  position: relative;
+  z-index: 20;
+  padding: 16px 20px;
 }
 
-.navbarContainer {
-  width: min(1280px, 100%);
+.navbarInner {
+  max-width: 1280px;
   margin: 0 auto;
-  padding: 0 clamp(12px, 3.5vw, 36px);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: 16px;
 }
 
-/* Nav Left: Back Button & Title */
 .navLeft {
   display: flex;
   align-items: center;
-  gap: 10px;
-  min-width: 0;
+  gap: 14px;
 }
 
-.backButton {
-  display: inline-flex;
+.backCircleBtn {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #e2e8f0;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: all 180ms ease;
+  flex-shrink: 0;
+}
+
+.backCircleBtn:hover {
+  background: rgba(168, 85, 247, 0.2);
+  border-color: rgba(168, 85, 247, 0.5);
+  color: #ffffff;
+  transform: translateX(-2px);
+}
+
+.navTitleGroup {
+  display: flex;
+  flex-direction: column;
+}
+
+.navTitleRow {
+  display: flex;
   align-items: center;
   gap: 8px;
-  padding: 6px 12px 6px 8px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(168, 85, 247, 0.2);
-  border-radius: 12px;
-  color: #fff;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-  text-decoration: none;
-  cursor: pointer;
-  white-space: nowrap;
-}
-
-.backButton:hover {
-  background: rgba(139, 92, 246, 0.15);
-  border-color: rgba(168, 85, 247, 0.4);
-  transform: translateX(-2px);
-  box-shadow: 0 4px 14px rgba(139, 92, 246, 0.2);
-}
-
-.backIcon {
-  color: var(--violet-light, #c084fc);
-  flex-shrink: 0;
 }
 
 .navTitle {
   font-family: var(--font-display, 'Outfit', sans-serif);
-  font-size: 16.5px;
+  font-size: 24px;
   font-weight: 800;
-  letter-spacing: -0.01em;
-  color: #fff;
-  white-space: nowrap;
+  color: #ffffff;
+  letter-spacing: -0.02em;
+  margin: 0;
+  line-height: 1.1;
 }
 
-.navBrandBadge {
-  font-size: 9.5px;
-  font-weight: 800;
-  letter-spacing: 0.12em;
-  padding: 3px 7px;
-  border-radius: 999px;
-  background: rgba(139, 92, 246, 0.12);
-  color: var(--violet-light, #c084fc);
-  border: 1px solid rgba(139, 92, 246, 0.25);
-  white-space: nowrap;
+.titleFlameImg {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 6px rgba(245, 158, 11, 0.6));
 }
 
-/* Nav Right: Pills & Account */
-.navRightGroup {
+.navSubtitle {
+  font-size: 13px;
+  color: #94a3b8;
+  margin-top: 2px;
+  line-height: 1.3;
+}
+
+.navRight {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+/* Desktop Streak Badge */
+.desktopStreakBadge {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(19, 14, 40, 0.85);
+  border: 1px solid rgba(168, 85, 247, 0.35);
+  border-radius: 14px;
+  padding: 6px 14px 6px 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.35);
+}
+
+.streakFlameWrap {
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+}
+
+.streakFlameWrap img {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+}
+
+.desktopStreakText {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.15;
+}
+
+.desktopStreakText strong {
+  font-family: var(--font-display, 'Outfit', sans-serif);
+  font-size: 13px;
+  color: #ffffff;
+}
+
+.desktopStreakText span {
+  font-size: 11px;
+  color: #c084fc;
+}
+
+/* Wallet Gem Pill (Interactive) */
+.walletGemPill {
   display: flex;
   align-items: center;
   gap: 8px;
-  flex-shrink: 0;
-}
-
-/* Wallet Balance Pill */
-.walletPill {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  padding: 5px 12px;
-  background: rgba(19, 14, 38, 0.85);
-  border: 1px solid rgba(168, 85, 247, 0.24);
+  background: linear-gradient(135deg, rgba(30, 20, 60, 0.9), rgba(20, 14, 45, 0.95));
+  border: 1px solid rgba(168, 85, 247, 0.45);
   border-radius: 999px;
-  color: #fff;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  padding: 6px 16px 6px 10px;
+  color: #ffffff;
   cursor: pointer;
-  white-space: nowrap;
+  box-shadow: 0 4px 16px rgba(124, 58, 237, 0.25);
+  transition: all 180ms ease;
 }
 
-.walletPill:hover {
-  background: rgba(28, 20, 56, 0.95);
-  border-color: rgba(168, 85, 247, 0.48);
+.walletGemPill:hover {
+  border-color: #c084fc;
+  box-shadow: 0 0 20px rgba(168, 85, 247, 0.45);
   transform: translateY(-1px);
-  box-shadow: 0 4px 16px rgba(139, 92, 246, 0.22);
 }
 
-.walletCoinIcon {
-  width: 20px;
-  height: 20px;
-  display: grid;
-  place-items: center;
-  flex-shrink: 0;
+.gemIcon {
+  filter: drop-shadow(0 0 6px rgba(192, 132, 252, 0.7));
 }
 
-.walletCoinIcon img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-}
-
-.walletPillText {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.walletPillText strong {
+.walletBalanceNumber {
   font-family: var(--font-display, 'Outfit', sans-serif);
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 700;
-  color: #fff;
-}
-
-.walletUnit {
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--violet-light, #c084fc);
-}
-
-.giftBadge {
-  font-size: 10px;
-  font-weight: 800;
-  padding: 2px 6px;
-  border-radius: 999px;
-  background: rgba(245, 158, 11, 0.18);
-  color: var(--gold-light, #fbbf24);
-  border: 1px solid rgba(245, 158, 11, 0.35);
-  margin-left: 2px;
-}
-
-/* Streak Pill */
-.streakPill {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  padding: 5px 11px;
-  border-radius: 999px;
-  background: rgba(245, 158, 11, 0.12);
-  border: 1px solid rgba(245, 158, 11, 0.28);
-  color: var(--gold-light, #fbbf24);
-  font-size: 13px;
-  font-weight: 800;
+  color: #ffffff;
   letter-spacing: 0.02em;
-  white-space: nowrap;
 }
 
-.streakFlameIcon {
-  width: 18px;
-  height: 18px;
-  object-fit: contain;
-  flex-shrink: 0;
-  animation: flamePulse 2.5s ease-in-out infinite;
-}
-
-@keyframes flamePulse {
-  0%, 100% { transform: scale(1); filter: drop-shadow(0 0 2px rgba(245, 158, 11, 0.5)); }
-  50% { transform: scale(1.12); filter: drop-shadow(0 0 6px rgba(245, 158, 11, 0.8)); }
-}
-
-.streakPillText {
-  display: flex;
-  align-items: center;
-  gap: 2px;
-}
-
-.streakPillText strong {
-  font-family: var(--font-display, 'Outfit', sans-serif);
-  font-size: 13px;
-  color: #fff;
-}
-
-.streakPillLabel {
-  font-size: 11px;
-  color: var(--gold-light, #fbbf24);
-  font-weight: 600;
-}
-
-/* Account Dropdown */
+/* User Account Menu */
 .accountMenuWrap {
   position: relative;
 }
 
 .accountBtn {
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  gap: 5px;
-  padding: 3px 6px 3px 3px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(168, 85, 247, 0.2);
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 999px;
-  color: var(--text-secondary, #94a3b8);
-  transition: all 0.2s ease;
+  padding: 4px 8px 4px 4px;
+  color: #94a3b8;
   cursor: pointer;
+  transition: all 150ms ease;
 }
 
 .accountBtn:hover,
 .accountBtnActive {
-  background: rgba(139, 92, 246, 0.16);
-  border-color: rgba(168, 85, 247, 0.45);
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(168, 85, 247, 0.4);
   color: #fff;
 }
 
 .avatarCircle {
-  width: 30px;
-  height: 30px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #7c3aed, #a855f7);
+  background: linear-gradient(135deg, #a855f7, #6366f1);
   color: #fff;
-  font-size: 13px;
-  font-weight: 800;
   display: grid;
   place-items: center;
-  box-shadow: 0 2px 8px rgba(124, 58, 237, 0.35);
+  font-size: 13px;
+  font-weight: 700;
 }
 
 .chevronIcon {
-  transition: transform 0.2s ease;
-  color: var(--text-secondary, #94a3b8);
-}
-
-.accountBtnActive .chevronIcon {
-  transform: rotate(180deg);
+  color: #94a3b8;
 }
 
 .accountDropdown {
   position: absolute;
-  top: calc(100% + 10px);
+  top: calc(100% + 8px);
   right: 0;
-  width: 250px;
-  background: rgba(16, 12, 32, 0.96);
-  border: 1px solid rgba(168, 85, 247, 0.25);
+  width: 240px;
+  background: #110c28;
+  border: 1px solid rgba(168, 85, 247, 0.35);
   border-radius: 16px;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(168, 85, 247, 0.15);
   padding: 12px;
-  z-index: 1050;
-  animation: dropdownEnter 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  backdrop-filter: blur(20px);
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.7), 0 0 25px rgba(139, 92, 246, 0.2);
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  animation: dropdownIn 150ms ease-out;
 }
 
-@keyframes dropdownEnter {
-  from {
-    opacity: 0;
-    transform: translateY(6px) scale(0.97);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
+@keyframes dropdownIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .dropdownHeader {
   display: flex;
   flex-direction: column;
-  gap: 2px;
-  padding: 6px 8px 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .signedInLabel {
-  font-size: 9.5px;
-  font-weight: 800;
-  letter-spacing: 0.1em;
-  color: var(--violet-light, #c084fc);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: #c084fc;
+  font-weight: 700;
 }
 
 .userFullName {
   font-size: 14px;
-  font-weight: 700;
-  color: #fff;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  color: #ffffff;
 }
 
 .userEmail {
-  font-size: 12px;
-  color: var(--text-secondary, #94a3b8);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  font-size: 11px;
+  color: #94a3b8;
+  word-break: break-all;
 }
 
 .dropdownStats {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 6px;
-  padding: 6px 8px;
   background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 10px;
-  margin-bottom: 8px;
+  border-radius: 8px;
+  padding: 6px 8px;
 }
 
 .dropdownStatItem {
   display: flex;
   flex-direction: column;
-  gap: 2px;
 }
 
 .dropdownStatItem span {
-  font-size: 10.5px;
-  color: var(--text-muted, #64748b);
+  font-size: 10px;
+  color: #94a3b8;
 }
 
 .dropdownStatItem strong {
-  font-size: 12.5px;
-  font-weight: 700;
-  color: #fff;
+  font-size: 12px;
+  color: #fbbf24;
 }
 
 .dropdownDivider {
   height: 1px;
-  background: rgba(255, 255, 255, 0.08);
-  margin: 6px 0;
+  background: rgba(255, 255, 255, 0.06);
+  margin: 2px 0;
 }
 
 .dropdownAction {
-  width: 100%;
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 9px 10px;
+  background: none;
+  border: none;
   border-radius: 8px;
-  font-size: 12.5px;
-  font-weight: 600;
+  padding: 8px 10px;
   color: #e2e8f0;
-  transition: all 0.15s ease;
+  font-size: 13px;
   cursor: pointer;
+  transition: all 120ms ease;
+  width: 100%;
+  text-align: left;
 }
 
 .dropdownAction:hover {
-  background: rgba(139, 92, 246, 0.14);
-  color: #fff;
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
 }
 
 .logoutAction {
-  color: #fca5a5;
+  color: #f87171;
 }
 
 .logoutAction:hover {
-  background: rgba(244, 63, 94, 0.15);
-  color: #fecdd3;
+  background: rgba(248, 113, 113, 0.12);
+  color: #fca5a5;
 }
 
 /* ==========================================================================
-   MAIN CONTENT & ALERTS
+   MAIN DASHBOARD CONTAINER
    ========================================================================== */
-.mainContent {
-  width: min(1280px, 100%);
+.mainContainer {
+  max-width: 1280px;
+  width: 100%;
   margin: 0 auto;
-  padding: 24px clamp(12px, 3.5vw, 36px) 60px;
-  flex: 1;
+  padding: 0 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
   position: relative;
-  z-index: 1;
+  z-index: 10;
 }
 
+/* Alert Notification Banners */
 .alertBanner {
+  background: rgba(244, 63, 94, 0.12);
+  border: 1px solid rgba(244, 63, 94, 0.35);
+  border-radius: 14px;
+  padding: 12px 16px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  padding: 12px 16px;
-  background: rgba(244, 63, 94, 0.1);
-  border: 1px solid rgba(244, 63, 94, 0.28);
-  border-radius: 14px;
   color: #fecdd3;
-  font-size: 13.5px;
-  margin-bottom: 20px;
+  font-size: 13px;
 }
 
 .alertLeft {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 }
 
 .alertRetryBtn {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 6px 12px;
-  border-radius: 8px;
   background: rgba(244, 63, 94, 0.2);
-  color: #fff;
+  border: 1px solid rgba(244, 63, 94, 0.4);
+  border-radius: 8px;
+  padding: 6px 12px;
+  color: #ffffff;
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;
 }
 
-/* Reset Banner */
 .resetBanner {
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  border-radius: 14px;
+  padding: 12px 16px;
   display: flex;
   align-items: center;
-  gap: 14px;
-  padding: 14px 18px;
-  background: linear-gradient(135deg, rgba(245, 158, 11, 0.12), rgba(217, 119, 6, 0.08));
-  border: 1px solid rgba(245, 158, 11, 0.3);
-  border-radius: 16px;
-  margin-bottom: 24px;
+  gap: 12px;
 }
 
 .resetIconWrap {
-  width: 38px;
-  height: 38px;
-  border-radius: 10px;
-  background: rgba(245, 158, 11, 0.18);
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: rgba(245, 158, 11, 0.2);
   display: grid;
   place-items: center;
   flex-shrink: 0;
 }
 
-.resetFlameImg {
-  width: 22px;
-  height: 22px;
+.resetIconWrap img {
+  width: 20px;
+  height: 20px;
   object-fit: contain;
 }
 
 .resetTextWrap strong {
   display: block;
-  font-size: 14px;
-  font-weight: 700;
-  color: #fff;
-  margin-bottom: 2px;
+  font-size: 13px;
+  color: #fbbf24;
 }
 
 .resetTextWrap p {
-  font-size: 12.5px;
-  color: var(--text-secondary, #94a3b8);
-  line-height: 1.4;
+  font-size: 12px;
+  color: #cbd5e1;
   margin: 0;
 }
 
 /* ==========================================================================
-   HERO COMPOSITION & ARTWORK BANNER
+   DESKTOP HERO SECTION (Two Balanced Side-by-Side Cards)
    ========================================================================== */
-.heroSection {
-  margin-bottom: 40px;
-}
-
-/* Banner Artwork with Bigger_Streak.png & Mobile_Hero.png */
-.heroBannerArtwork {
-  width: 100%;
-  border-radius: 20px;
-  overflow: hidden;
-  border: 1px solid rgba(168, 85, 247, 0.2);
-  margin-bottom: 24px;
-  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.45);
-  background: rgba(14, 10, 28, 0.6);
-  position: relative;
-}
-
-.heroArtworkImg {
-  width: 100%;
-  height: auto;
-  max-height: 220px;
-  object-fit: cover;
-  display: block;
-  transition: transform 0.4s ease;
-}
-
-.heroArtworkImg:hover {
-  transform: scale(1.015);
-}
-
-/* Main Hero Grid: Left Main Card + Right Day 7 Card */
-.heroGrid {
+.desktopHeroGrid {
   display: grid;
-  grid-template-columns: minmax(0, 1.85fr) minmax(0, 1fr);
-  gap: 24px;
-}
-
-.heroMainCard {
-  background: rgba(18, 13, 36, 0.76);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(168, 85, 247, 0.18);
-  border-radius: 24px;
-  padding: clamp(20px, 3.5vw, 36px);
-  display: flex;
-  flex-direction: column;
+  grid-template-columns: 1.15fr 0.85fr;
   gap: 20px;
-  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.45);
-  position: relative;
+  align-items: stretch;
 }
 
-.heroHeaderRow {
+/* LEFT HERO CARD */
+.desktopHeroLeftCard {
+  background: linear-gradient(145deg, #0e0922 0%, #0a061a 100%);
+  border: 1px solid rgba(139, 92, 246, 0.25);
+  border-radius: 24px;
+  padding: 24px 28px;
   display: flex;
-  align-items: center;
+  flex-direction: column;
   justify-content: space-between;
-  gap: 12px;
-  flex-wrap: wrap;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45), 0 0 25px rgba(139, 92, 246, 0.08);
+  position: relative;
+  overflow: hidden;
 }
 
-.heroEyebrowGroup {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
+.heroLeftHeader {
+  margin-bottom: 14px;
 }
 
-.eyebrowTag {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 0.12em;
-  color: var(--violet-light, #c084fc);
-  background: rgba(139, 92, 246, 0.12);
-  padding: 4px 10px;
-  border-radius: 999px;
-  border: 1px solid rgba(139, 92, 246, 0.24);
-}
-
-.statusActiveTag {
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  color: #fff;
-  background: linear-gradient(135deg, #7c3aed, #a855f7);
-  padding: 4px 10px;
-  border-radius: 999px;
-  box-shadow: 0 2px 10px rgba(124, 58, 237, 0.35);
-}
-
-.statusCompleteTag {
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  color: #d1fae5;
-  background: linear-gradient(135deg, #059669, #10b981);
-  padding: 4px 10px;
-  border-radius: 999px;
-}
-
-.serverVerifiedBadge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--emerald-light, #34d399);
-  background: rgba(16, 185, 129, 0.1);
-  padding: 4px 10px;
-  border-radius: 999px;
-  border: 1px solid rgba(16, 185, 129, 0.25);
-}
-
-.heroTitle {
+.desktopHeroTitle {
   font-family: var(--font-display, 'Outfit', sans-serif);
-  font-size: clamp(24px, 4vw, 36px);
+  font-size: 28px;
   font-weight: 800;
-  color: #fff;
+  color: #ffffff;
+  margin: 0;
   line-height: 1.15;
-  letter-spacing: -0.02em;
-  margin: 0;
+  letter-spacing: -0.01em;
 }
 
-.heroHighlight {
-  background: linear-gradient(135deg, #c084fc 0%, #fbbf24 85%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
+.desktopHeroTitleGold {
+  color: #fbbf24;
+  text-shadow: 0 0 20px rgba(251, 191, 36, 0.5);
 }
 
-.heroSubtitle {
-  font-size: 14.5px;
-  color: var(--text-secondary, #94a3b8);
-  line-height: 1.55;
-  max-width: 600px;
-  margin: 0;
+.desktopHeroDesc {
+  font-size: 13.5px;
+  color: #94a3b8;
+  margin-top: 4px;
+  margin-bottom: 0;
 }
 
-/* Stepper / Progress Rail across 7 Days */
-.stepperContainer {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  padding: 16px 20px;
-  background: rgba(255, 255, 255, 0.025);
-  border: 1px solid rgba(168, 85, 247, 0.16);
-  border-radius: 18px;
-}
-
-.stepperHeader {
+.heroLeftBody {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  font-size: 13px;
+  gap: 20px;
 }
 
-.stepperLabel {
-  color: var(--text-secondary, #94a3b8);
-  font-weight: 500;
-}
-
-.stepperCount strong {
-  color: var(--gold-light, #fbbf24);
-}
-
-.milestoneRail {
-  position: relative;
-  width: 100%;
-  padding: 10px 0;
-}
-
-.railTrack {
-  position: absolute;
-  top: 50%;
-  left: 14px;
-  right: 14px;
-  height: 4px;
-  background: rgba(255, 255, 255, 0.08);
-  border-radius: 999px;
-  transform: translateY(-50%);
-  z-index: 1;
-}
-
-.railFill {
-  height: 100%;
-  background: linear-gradient(90deg, #8b5cf6, #c084fc, #f59e0b);
-  border-radius: 999px;
-  transition: width 0.4s ease;
-  box-shadow: 0 0 10px rgba(168, 85, 247, 0.4);
-}
-
-.stepperNodes {
-  position: relative;
-  z-index: 2;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.stepperNode {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-  background: transparent;
-}
-
-.nodeCircle {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  background: #110d24;
-  border: 2px solid rgba(255, 255, 255, 0.14);
-  color: var(--text-muted, #64748b);
-  font-size: 11px;
-  font-weight: 800;
+.heroLeftIllustrationWrap {
+  width: 170px;
+  flex-shrink: 0;
   display: grid;
   place-items: center;
-  transition: all 0.2s ease;
 }
 
-.nodeDayText {
-  font-size: 10.5px;
-  font-weight: 700;
-  color: var(--text-muted, #64748b);
+.heroLeftIllustrationImg {
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.5));
 }
 
-.nodeClaimed .nodeCircle {
-  background: #059669;
-  border-color: #34d399;
-  color: #fff;
-  box-shadow: 0 0 10px rgba(16, 185, 129, 0.4);
-}
-
-.nodeClaimed .nodeDayText {
-  color: var(--emerald-light, #34d399);
-}
-
-.nodeCurrent .nodeCircle {
-  background: #7c3aed;
-  border-color: #c084fc;
-  color: #fff;
-  box-shadow: 0 0 0 4px rgba(168, 85, 247, 0.25);
-  animation: pulseNode 2s infinite ease-in-out;
-}
-
-@keyframes pulseNode {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.12); }
-}
-
-.nodeCurrent .nodeDayText {
-  color: #fff;
-}
-
-.nodeUltimate .nodeCircle {
-  border-color: rgba(245, 158, 11, 0.6);
-  color: var(--gold-light, #fbbf24);
-}
-
-.nodeUltimate.nodeClaimed .nodeCircle {
-  background: linear-gradient(135deg, #d97706, #f59e0b);
-  border-color: #fde047;
-  color: #fff;
-}
-
-/* Countdown Banner */
-.countdownBanner {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 12px 18px;
-  background: rgba(139, 92, 246, 0.08);
-  border: 1px solid rgba(139, 92, 246, 0.24);
-  border-radius: 14px;
-}
-
-.countdownInfo {
+.heroStatsContainer {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 10px;
+  flex: 1;
 }
 
-.countdownLabel {
-  font-size: 10.5px;
-  font-weight: 800;
-  letter-spacing: 0.1em;
-  color: var(--violet-light, #c084fc);
-}
-
-.countdownDay {
-  font-size: 13.5px;
-  font-weight: 700;
-  color: #fff;
-}
-
-.countdownBox {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 14px;
-  background: rgba(0, 0, 0, 0.35);
-  border: 1px solid rgba(168, 85, 247, 0.3);
-  border-radius: 10px;
-}
-
-.countdownClockIcon {
-  color: var(--violet-light, #c084fc);
-}
-
-.countdownValue {
-  font-family: var(--font-display, 'Outfit', sans-serif);
-  font-size: 16px;
-  font-weight: 800;
-  color: #fff;
-  letter-spacing: 0.05em;
-  font-variant-numeric: tabular-nums;
-}
-
-/* 3 Metric Cards Grid */
-.statsGrid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-}
-
-.statCard {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(168, 85, 247, 0.16);
-  border-radius: 16px;
-  padding: 14px 16px;
+.heroStatCard {
   display: flex;
   align-items: center;
-  gap: 12px;
-  transition: all 0.2s ease;
+  gap: 14px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(139, 92, 246, 0.16);
+  border-radius: 14px;
+  padding: 10px 14px;
+  transition: all 180ms ease;
 }
 
-.statCard:hover {
-  background: rgba(255, 255, 255, 0.05);
+.heroStatCard:hover {
+  background: rgba(255, 255, 255, 0.06);
   border-color: rgba(168, 85, 247, 0.35);
-  transform: translateY(-2px);
+  transform: translateX(3px);
 }
 
-.statCardClickable {
-  cursor: pointer;
-}
-
-.statIconWrap {
+.heroStatIconPurple {
   width: 38px;
   height: 38px;
   border-radius: 10px;
-  background: rgba(139, 92, 246, 0.12);
+  background: rgba(168, 85, 247, 0.15);
+  border: 1px solid rgba(168, 85, 247, 0.3);
+  color: #c084fc;
   display: grid;
   place-items: center;
   flex-shrink: 0;
 }
 
-.statIconImg {
-  width: 22px;
-  height: 22px;
+.heroStatIconGreen {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  color: #10b981;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+.heroStatIconGold {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: rgba(245, 158, 11, 0.15);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+.heroStatText {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.heroStatLabel {
+  font-size: 11.5px;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.heroStatValue {
+  font-family: var(--font-display, 'Outfit', sans-serif);
+  font-size: 18px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.textGold {
+  color: #fbbf24 !important;
+}
+
+/* RIGHT HERO CARD (Ultimate Reward Showcase Panel) */
+.desktopHeroRightCard {
+  background: linear-gradient(145deg, #120b2d 0%, #0b071e 100%);
+  border: 1px solid rgba(168, 85, 247, 0.4);
+  border-radius: 24px;
+  padding: 24px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45), 0 0 35px rgba(139, 92, 246, 0.22);
+}
+
+.heroRightTopBadge {
+  position: absolute;
+  top: 16px;
+  right: 18px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(168, 85, 247, 0.3);
+  border-radius: 999px;
+  padding: 4px 12px 4px 8px;
+}
+
+.flameCircle {
+  width: 20px;
+  height: 20px;
+  display: grid;
+  place-items: center;
+}
+
+.flameCircle img {
+  width: 16px;
+  height: 16px;
   object-fit: contain;
 }
 
-.statLabel {
-  display: block;
-  font-size: 11px;
-  color: var(--text-secondary, #94a3b8);
-  margin-bottom: 2px;
+.heroRightTopBadge strong {
+  font-size: 11.5px;
+  color: #ffffff;
 }
 
-.statValue {
+.heroRightTopBadge span {
+  font-size: 10px;
+  color: #c084fc;
+  margin-left: 4px;
+}
+
+.ultimateCrownShowcaseWrap {
+  width: 170px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  animation: floatCrown 4s infinite ease-in-out;
+}
+
+@keyframes floatCrown {
+  0%, 100% { transform: translateY(0); filter: drop-shadow(0 10px 25px rgba(168, 85, 247, 0.5)); }
+  50% { transform: translateY(-6px); filter: drop-shadow(0 16px 35px rgba(245, 158, 11, 0.6)); }
+}
+
+.ultimateCrownShowcaseImg {
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+.ultimateRewardMetaDesktop {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+}
+
+.ultimateRewardCategory {
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #c084fc;
+}
+
+.ultimateAmountDesktop {
   font-family: var(--font-display, 'Outfit', sans-serif);
-  font-size: 15px;
-  font-weight: 800;
-  color: #fff;
+  font-size: 46px;
+  font-weight: 900;
+  color: #ffffff;
+  line-height: 1;
+  letter-spacing: -0.02em;
 }
 
-/* Day 7 Ultimate Spotlight Card */
-.ultimateCard {
-  background: linear-gradient(180deg, rgba(32, 20, 56, 0.88) 0%, rgba(18, 12, 34, 0.95) 100%);
-  border: 1px solid rgba(245, 158, 11, 0.35);
-  border-radius: 24px;
-  padding: clamp(24px, 4vw, 36px);
+.amazonGiftCardPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 999px;
+  padding: 4px 12px;
+  width: fit-content;
+  font-size: 12px;
+  color: #f1f5f9;
+  font-weight: 500;
+}
+
+.unlockDayText {
+  font-size: 12.5px;
+  color: #94a3b8;
+  margin-top: 4px;
+}
+
+.goldText {
+  color: #fbbf24;
+}
+
+/* ==========================================================================
+   MOBILE HERO & ACTION ROW (Hidden on Desktop)
+   ========================================================================== */
+.mobileHeroBannerWrap {
+  display: none;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.mobileHeroBanner {
+  background: linear-gradient(135deg, #170d37 0%, #0e0824 100%);
+  border: 1px solid rgba(168, 85, 247, 0.35);
+  border-radius: 20px;
+  padding: 16px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 20px rgba(139, 92, 246, 0.15);
+}
+
+.mobileBannerContent {
+  flex: 1;
+  z-index: 2;
+}
+
+.mobileBannerTitle {
+  font-family: var(--font-display, 'Outfit', sans-serif);
+  font-size: 19px;
+  font-weight: 800;
+  color: #ffffff;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.mobileBannerTitleHighlight {
+  color: #fbbf24;
+  text-shadow: 0 0 14px rgba(251, 191, 36, 0.5);
+}
+
+.mobileBannerSubtitle {
+  font-size: 12px;
+  color: #cbd5e1;
+  margin-top: 4px;
+  margin-bottom: 0;
+  line-height: 1.35;
+}
+
+.mobileBannerArt {
+  width: 100px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+}
+
+.mobileBannerArt img {
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+.mobileActionRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.mobileStreakPill {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  border-radius: 12px;
+  padding: 10px 14px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.pillFlame {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+}
+
+.mobileCalendarPill {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(168, 85, 247, 0.35);
+  border-radius: 12px;
+  padding: 10px 14px;
+  color: #c084fc;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 150ms ease;
+}
+
+.mobileCalendarPill:hover {
+  background: rgba(168, 85, 247, 0.15);
+  border-color: #c084fc;
+}
+
+.calendarIcon {
+  color: #c084fc;
+}
+
+/* ==========================================================================
+   MOBILE SUMMARY STAT CARDS (3 Equal Columns)
+   ========================================================================== */
+.mobileStatsGrid {
+  display: none;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.mobileStatCard {
+  background: rgba(17, 12, 36, 0.85);
+  border: 1px solid rgba(139, 92, 246, 0.2);
+  border-radius: 14px;
+  padding: 10px 8px;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  gap: 14px;
-  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5), 0 0 24px rgba(245, 158, 11, 0.12);
-  position: relative;
-  overflow: hidden;
-}
-
-.ultimateShimmer {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(90deg, transparent, rgba(245, 158, 11, 0.08), transparent);
-  pointer-events: none;
-  animation: softShine 6s infinite ease-in-out;
-}
-
-@keyframes softShine {
-  0% { transform: translateX(-150%) skewX(-15deg); }
-  50% { transform: translateX(250%) skewX(-15deg); }
-  100% { transform: translateX(250%) skewX(-15deg); }
-}
-
-.ultimateTopBadge {
-  display: inline-flex;
-  align-items: center;
   gap: 6px;
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 0.12em;
-  color: var(--gold-light, #fbbf24);
-  background: rgba(245, 158, 11, 0.12);
-  padding: 4px 12px;
-  border-radius: 999px;
-  border: 1px solid rgba(245, 158, 11, 0.3);
 }
 
-.ultimateIconWrap {
-  width: 96px;
-  height: 96px;
-  border-radius: 24px;
-  background: radial-gradient(circle, rgba(245, 158, 11, 0.18) 0%, transparent 70%);
+.mobileStatIconPurple {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  background: rgba(168, 85, 247, 0.15);
+  color: #c084fc;
+  display: grid;
+  place-items: center;
+}
+
+.mobileStatIconGreen {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  background: rgba(16, 185, 129, 0.15);
+  color: #10b981;
+  display: grid;
+  place-items: center;
+}
+
+.mobileStatIconGold {
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+}
+
+.mobileStatInfo {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.15;
+}
+
+.mobileStatLabel {
+  font-size: 10px;
+  color: #94a3b8;
+}
+
+.mobileStatVal {
+  font-family: var(--font-display, 'Outfit', sans-serif);
+  font-size: 15px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+/* ==========================================================================
+   MOBILE ULTIMATE REWARD PANEL (Full-width with Pedestal)
+   ========================================================================== */
+.mobileUltimatePanel {
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: linear-gradient(135deg, #130b2c 0%, #0a061a 100%);
+  border: 1px solid rgba(168, 85, 247, 0.35);
+  border-radius: 18px;
+  padding: 14px 16px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4), 0 0 20px rgba(139, 92, 246, 0.16);
+}
+
+.mobileUltimateCrownWrap {
+  width: 80px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+}
+
+.mobileUltimateCrownImg {
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 6px 15px rgba(168, 85, 247, 0.4));
+}
+
+.mobileUltimateInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+}
+
+.mobileUltimateAmount {
+  font-family: var(--font-display, 'Outfit', sans-serif);
+  font-size: 28px;
+  font-weight: 900;
+  color: #ffffff;
+  line-height: 1.1;
+}
+
+.mobileUltimateLockCol {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 4px;
+}
+
+.lockCirclePurple {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: rgba(168, 85, 247, 0.15);
+  border: 1px solid rgba(168, 85, 247, 0.35);
+  color: #c084fc;
+  display: grid;
+  place-items: center;
+}
+
+.unlockDaySubtext {
+  font-size: 11px;
+  color: #94a3b8;
+  line-height: 1.15;
+}
+
+/* ==========================================================================
+   SPARKLE DIVIDER (Desktop & Mobile)
+   ========================================================================== */
+.sparkleDividerWrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 6px 0;
+}
+
+.sparkleStar {
+  color: #c084fc;
+  font-size: 15px;
+  text-shadow: 0 0 10px rgba(192, 132, 252, 0.8);
+  animation: starPulse 2.5s infinite ease-in-out;
+}
+
+@keyframes starPulse {
+  0%, 100% { opacity: 0.6; transform: scale(0.9); }
+  50% { opacity: 1; transform: scale(1.15); }
+}
+
+.sparkleText {
+  font-size: 13.5px;
+  color: #94a3b8;
+  letter-spacing: 0.02em;
+}
+
+/* ==========================================================================
+   7 DAILY REWARD CARDS SECTION
+   ========================================================================== */
+.rewardCardsContainer {
+  width: 100%;
+}
+
+.rewardCardsGrid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 12px;
+}
+
+/* Reward Card Anatomy */
+.rewardCard {
+  background: linear-gradient(170deg, #110c28 0%, #0a0618 100%);
+  border: 1px solid rgba(139, 92, 246, 0.22);
+  border-radius: 18px;
+  padding: 14px 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  text-align: center;
+  position: relative;
+  transition: all 200ms cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
+}
+
+.rewardCard:hover {
+  transform: translateY(-3px);
+  border-color: rgba(168, 85, 247, 0.45);
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(139, 92, 246, 0.15);
+}
+
+/* Card States */
+.cardTodayActive {
+  border: 1.5px solid #fbbf24 !important;
+  box-shadow: 0 0 22px rgba(245, 158, 11, 0.3), inset 0 0 14px rgba(245, 158, 11, 0.06) !important;
+  background: linear-gradient(170deg, #17112e 0%, #0f0a1f 100%);
+}
+
+.cardDay7Vip {
+  border: 1.5px solid rgba(245, 158, 11, 0.65) !important;
+  box-shadow: 0 0 22px rgba(245, 158, 11, 0.18) !important;
+  background: linear-gradient(170deg, #19122f 0%, #0c081d 100%);
+}
+
+.cardClaimed {
+  border-color: rgba(16, 185, 129, 0.35) !important;
+}
+
+.cardLocked {
+  opacity: 0.92;
+}
+
+/* Card Header Row */
+.cardHeaderRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 8px;
+  min-height: 22px;
+}
+
+.dayPill {
+  font-size: 11px;
+  font-weight: 600;
+  color: #cbd5e1;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 999px;
+  padding: 2px 8px;
+}
+
+.badgeClaimedCheck {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #10b981;
+  color: #ffffff;
+  display: grid;
+  place-items: center;
+}
+
+.badgeToday {
+  font-size: 10px;
+  font-weight: 800;
+  color: #0b071a;
+  background: #fbbf24;
+  border-radius: 6px;
+  padding: 2px 6px;
+  letter-spacing: 0.02em;
+}
+
+.badgeTodayPending {
+  font-size: 10px;
+  font-weight: 800;
+  color: #fbbf24;
+  background: rgba(245, 158, 11, 0.15);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  border-radius: 6px;
+  padding: 2px 6px;
+}
+
+.badgeVip {
+  font-size: 10px;
+  font-weight: 800;
+  color: #0b071a;
+  background: linear-gradient(135deg, #fbbf24, #f59e0b);
+  border-radius: 6px;
+  padding: 2px 6px;
+}
+
+.badgePurple {
+  font-size: 10px;
+  font-weight: 700;
+  color: #c084fc;
+  background: rgba(168, 85, 247, 0.2);
+  border-radius: 6px;
+  padding: 2px 6px;
+}
+
+/* Artwork Wrap */
+.cardArtworkWrap {
+  width: 68px;
+  height: 68px;
   display: grid;
   place-items: center;
   margin: 6px 0;
 }
 
-.ultimateIconWrap img {
-  width: 82px;
-  height: 82px;
+.cardArtworkImg {
+  max-width: 100%;
+  max-height: 100%;
   object-fit: contain;
-  filter: drop-shadow(0 6px 16px rgba(245, 158, 11, 0.4));
-  animation: subtleFloating 4s ease-in-out infinite;
+  transition: transform 200ms ease;
 }
 
-@keyframes subtleFloating {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-5px); }
-}
-
-.ultimateBadgeDay {
-  font-size: 11px;
-  font-weight: 800;
-  color: var(--violet-light, #c084fc);
-  letter-spacing: 0.1em;
-}
-
-.ultimateAmount {
-  font-family: var(--font-display, 'Outfit', sans-serif);
-  font-size: 22px;
-  font-weight: 800;
-  background: linear-gradient(135deg, #fef08a 0%, #f59e0b 60%, #d97706 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  line-height: 1.2;
-  margin: 0;
-}
-
-.ultimateSubtitle {
-  font-size: 13px;
-  color: var(--text-secondary, #94a3b8);
-  line-height: 1.45;
-  max-width: 260px;
-  margin: 0;
-}
-
-.ultimateStatusPill {
-  width: 100%;
-  padding: 10px 14px;
-  border-radius: 12px;
-  background: rgba(245, 158, 11, 0.1);
-  border: 1px solid rgba(245, 158, 11, 0.28);
-  color: var(--gold-light, #fbbf24);
-  font-size: 12px;
-  font-weight: 700;
-  margin-top: auto;
-}
-
-.ultimateCompletedPill {
-  background: rgba(16, 185, 129, 0.12);
-  border-color: rgba(16, 185, 129, 0.3);
-  color: var(--emerald-light, #34d399);
-}
-
-/* ==========================================================================
-   7 DAILY REWARDS GRID
-   ========================================================================== */
-.rewardsSection {
-  margin-bottom: 48px;
-}
-
-.sectionHeader {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 16px;
-  margin-bottom: 24px;
-  flex-wrap: wrap;
-}
-
-.sectionHeaderLeft {
-  max-width: 600px;
-}
-
-.sectionEyebrow {
-  display: block;
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 0.12em;
-  color: var(--violet-light, #c084fc);
-  margin-bottom: 4px;
-}
-
-.sectionTitle {
-  font-family: var(--font-display, 'Outfit', sans-serif);
-  font-size: 24px;
-  font-weight: 800;
-  color: #fff;
-  letter-spacing: -0.01em;
-  margin-bottom: 4px;
-}
-
-.sectionDesc {
-  font-size: 13.5px;
-  color: var(--text-secondary, #94a3b8);
-  margin: 0;
-}
-
-.sectionHeaderBadge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--emerald-light, #34d399);
-  background: rgba(16, 185, 129, 0.1);
-  padding: 6px 12px;
-  border-radius: 999px;
-  border: 1px solid rgba(16, 185, 129, 0.25);
-}
-
-/* 7 Reward Cards Grid */
-.rewardGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 16px;
-}
-
-.rewardCard {
-  background: rgba(18, 13, 34, 0.75);
-  backdrop-filter: blur(14px);
-  border: 1px solid rgba(168, 85, 247, 0.16);
-  border-radius: 20px;
-  padding: 16px 14px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  gap: 12px;
-  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
-  position: relative;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
-}
-
-.rewardCard:hover {
-  transform: translateY(-3px);
-  border-color: rgba(168, 85, 247, 0.35);
-  box-shadow: 0 12px 32px rgba(139, 92, 246, 0.15);
-}
-
-/* Card States */
-.cardAvailable {
-  border-color: rgba(168, 85, 247, 0.45);
-  background: rgba(24, 16, 48, 0.88);
-  box-shadow: 0 8px 30px rgba(139, 92, 246, 0.22), 0 0 0 1px rgba(168, 85, 247, 0.25);
-}
-
-.cardClaimed {
-  border-color: rgba(16, 185, 129, 0.28);
-  background: rgba(14, 18, 28, 0.7);
-}
-
-.cardMissed {
-  opacity: 0.65;
-  border-color: rgba(244, 63, 94, 0.2);
-}
-
-.cardLocked {
-  opacity: 0.78;
-}
-
-.cardDaySeven {
-  border-color: rgba(245, 158, 11, 0.38);
-  background: linear-gradient(180deg, rgba(28, 18, 48, 0.88) 0%, rgba(18, 12, 34, 0.95) 100%);
-  box-shadow: 0 10px 32px rgba(245, 158, 11, 0.14);
-}
-
-.cardDaySeven:hover {
-  border-color: rgba(245, 158, 11, 0.6);
-  box-shadow: 0 14px 40px rgba(245, 158, 11, 0.22);
-}
-
-/* Card Header */
-.cardHeader {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 6px;
-}
-
-.dayTag {
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  color: var(--violet-light, #c084fc);
-  background: rgba(139, 92, 246, 0.12);
-  padding: 3px 8px;
-  border-radius: 999px;
-  border: 1px solid rgba(139, 92, 246, 0.25);
-}
-
-.dayTagGold {
-  color: var(--gold-light, #fbbf24);
-  background: rgba(245, 158, 11, 0.14);
-  border-color: rgba(245, 158, 11, 0.35);
-}
-
-.todayPill {
-  font-size: 10px;
-  font-weight: 800;
-  color: #fff;
-  background: linear-gradient(135deg, #7c3aed, #a855f7);
-  padding: 3px 7px;
-  border-radius: 999px;
-  letter-spacing: 0.05em;
-  box-shadow: 0 2px 8px rgba(124, 58, 237, 0.4);
-}
-
-.claimedPill {
-  display: inline-flex;
-  align-items: center;
-  gap: 3px;
-  font-size: 10px;
-  font-weight: 800;
-  color: #34d399;
-  background: rgba(16, 185, 129, 0.14);
-  border: 1px solid rgba(16, 185, 129, 0.3);
-  padding: 3px 7px;
-  border-radius: 999px;
-}
-
-.lockedPill {
-  display: inline-flex;
-  align-items: center;
-  gap: 3px;
-  font-size: 10px;
-  font-weight: 700;
-  color: var(--text-muted, #64748b);
-  background: rgba(255, 255, 255, 0.04);
-  padding: 3px 6px;
-  border-radius: 999px;
-}
-
-.missedPill {
-  display: inline-flex;
-  align-items: center;
-  gap: 3px;
-  font-size: 10px;
-  font-weight: 700;
-  color: #f87171;
-  background: rgba(244, 63, 94, 0.1);
-  padding: 3px 6px;
-  border-radius: 999px;
-}
-
-/* Card Artwork */
-.rewardArtWrap {
-  width: 64px;
-  height: 64px;
-  border-radius: 18px;
-  background: radial-gradient(circle, rgba(139, 92, 246, 0.14) 0%, transparent 70%);
-  display: grid;
-  place-items: center;
-  margin: 4px 0;
-}
-
-.rewardArtImg {
-  width: 50px;
-  height: 50px;
-  object-fit: contain;
-  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.35));
-  transition: transform 0.25s ease;
-}
-
-.rewardCard:hover .rewardArtImg {
+.rewardCard:hover .cardArtworkImg {
   transform: scale(1.08);
 }
 
-.cardAvailable .rewardArtImg {
-  animation: subtleFloating 4s ease-in-out infinite;
+.artCrown {
+  filter: drop-shadow(0 4px 12px rgba(245, 158, 11, 0.4));
 }
 
-.artDay7 {
-  width: 56px;
-  height: 56px;
-  filter: drop-shadow(0 4px 14px rgba(245, 158, 11, 0.35));
+.artGiftBox {
+  filter: drop-shadow(0 4px 12px rgba(168, 85, 247, 0.3));
 }
 
-/* Card Meta */
-.rewardMeta {
+.artAmazon {
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.5));
+}
+
+/* Reward Info */
+.cardRewardInfo {
   display: flex;
   flex-direction: column;
-  align-items: center;
   gap: 2px;
   width: 100%;
+  margin-bottom: 12px;
 }
 
-.rewardTitleText {
-  font-size: 11.5px;
-  color: var(--text-secondary, #94a3b8);
-  font-weight: 500;
-}
-
-.rewardAmountText {
-  font-family: var(--font-display, 'Outfit', sans-serif);
-  font-size: 18px;
-  font-weight: 800;
-  color: #fff;
-  line-height: 1.2;
-}
-
-.textGold {
-  background: linear-gradient(135deg, #fef08a 0%, #f59e0b 80%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.rewardUnit {
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--violet-light, #c084fc);
-}
-
-.textGold .rewardUnit {
-  color: var(--gold-light, #fbbf24);
-  -webkit-text-fill-color: var(--gold-light, #fbbf24);
-}
-
-.rewardSubtitleText {
+.cardRewardTypeLabel {
   font-size: 10.5px;
-  color: var(--text-muted, #64748b);
+  color: #94a3b8;
+}
+
+.cardRewardAmount {
+  font-family: var(--font-display, 'Outfit', sans-serif);
+  font-size: 20px;
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+}
+
+.textGreen {
+  color: #10b981 !important;
+}
+
+.textPurple {
+  color: #c084fc !important;
+}
+
+.cardRewardSubtext {
+  font-size: 11px;
+  color: #94a3b8;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 100%;
 }
 
-/* Card Footer Actions */
-.cardFooterArea {
+/* Card Action Area */
+.cardActionArea {
   width: 100%;
-  margin-top: auto;
-  padding-top: 6px;
 }
 
-.statusBoxClaimed {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 5px;
+.buttonClaimed {
   width: 100%;
-  padding: 8px 10px;
+  padding: 7px 8px;
   border-radius: 10px;
   background: rgba(16, 185, 129, 0.12);
-  border: 1px solid rgba(16, 185, 129, 0.28);
-  color: var(--emerald-light, #34d399);
-  font-size: 12px;
+  border: 1px solid #10b981;
+  color: #10b981;
+  font-size: 11.5px;
   font-weight: 700;
-}
-
-.statusBoxLocked {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 5px;
+}
+
+.buttonClaimActive {
   width: 100%;
   padding: 8px 10px;
   border-radius: 10px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  color: var(--text-muted, #64748b);
-  font-size: 11.5px;
-  font-weight: 600;
-}
-
-.statusBoxMissed {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 5px;
-  width: 100%;
-  padding: 8px 10px;
-  border-radius: 10px;
-  background: rgba(244, 63, 94, 0.08);
-  border: 1px solid rgba(244, 63, 94, 0.2);
-  color: #f87171;
-  font-size: 11.5px;
-  font-weight: 600;
-}
-
-.claimRewardBtn {
-  width: 100%;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  padding: 9px 12px;
-  border-radius: 11px;
-  background: linear-gradient(135deg, #7c3aed 0%, #9333ea 50%, #a855f7 100%);
-  color: #fff;
-  font-size: 12.5px;
-  font-weight: 700;
-  box-shadow: 0 4px 16px rgba(124, 58, 237, 0.35);
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-  cursor: pointer;
-  animation: gentleGlow 2.5s infinite ease-in-out;
-}
-
-@keyframes gentleGlow {
-  0%, 100% { box-shadow: 0 4px 14px rgba(124, 58, 237, 0.3); }
-  50% { box-shadow: 0 6px 22px rgba(168, 85, 247, 0.5); }
-}
-
-.claimRewardBtn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 24px rgba(147, 51, 234, 0.55);
-}
-
-.claimRewardBtn:disabled {
-  opacity: 0.75;
-  cursor: not-allowed;
-  transform: none;
-}
-
-/* ==========================================================================
-   BENEFIT & SECURITY PILLARS (Supplied Artwork)
-   ========================================================================== */
-.featuresSection {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
-  margin-bottom: 48px;
-}
-
-.featureCard {
-  background: rgba(18, 13, 34, 0.65);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(168, 85, 247, 0.16);
-  border-radius: 20px;
-  padding: 22px 20px;
-  display: flex;
-  align-items: flex-start;
-  gap: 16px;
-  transition: all 0.2s ease;
-}
-
-.featureCard:hover {
-  background: rgba(24, 18, 44, 0.8);
-  border-color: rgba(168, 85, 247, 0.32);
-  transform: translateY(-2px);
-}
-
-.featureArtWrap {
-  width: 52px;
-  height: 52px;
-  border-radius: 14px;
-  background: rgba(139, 92, 246, 0.12);
-  display: grid;
-  place-items: center;
-  flex-shrink: 0;
-}
-
-.featureArtImg {
-  width: 36px;
-  height: 36px;
-  object-fit: contain;
-}
-
-.featureText strong {
-  display: block;
-  font-size: 14.5px;
-  font-weight: 700;
-  color: #fff;
-  margin-bottom: 4px;
-}
-
-.featureText p {
-  font-size: 12.5px;
-  color: var(--text-secondary, #94a3b8);
-  line-height: 1.5;
-  margin: 0;
-}
-
-/* ==========================================================================
-   RECENT ACTIVITY FEED / LEDGER
-   ========================================================================== */
-.historyCardSection {
-  background: rgba(18, 13, 34, 0.65);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(168, 85, 247, 0.16);
-  border-radius: 20px;
-  padding: 24px;
-  margin-bottom: 32px;
-}
-
-.historyCardHeader {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  margin-bottom: 20px;
-  flex-wrap: wrap;
-}
-
-.historyHeaderLeft {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.historyHeaderLeft h3 {
-  font-family: var(--font-display, 'Outfit', sans-serif);
-  font-size: 18px;
-  font-weight: 700;
-  color: #fff;
-  margin: 0 0 2px;
-}
-
-.historyHeaderLeft p {
-  font-size: 12.5px;
-  color: var(--text-secondary, #94a3b8);
-  margin: 0;
-}
-
-.openLedgerBtn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 7px 14px;
-  border-radius: 10px;
-  background: rgba(139, 92, 246, 0.12);
-  border: 1px solid rgba(168, 85, 247, 0.25);
-  color: var(--violet-light, #c084fc);
-  font-size: 12.5px;
-  font-weight: 600;
-  transition: all 0.2s ease;
-  cursor: pointer;
-}
-
-.openLedgerBtn:hover {
-  background: rgba(139, 92, 246, 0.22);
-  border-color: rgba(168, 85, 247, 0.45);
-  color: #fff;
-}
-
-.emptyHistoryState {
-  padding: 36px 16px;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  color: var(--text-muted, #64748b);
-  font-size: 13.5px;
-}
-
-.emptyHistIcon {
-  color: var(--text-muted, #64748b);
-  opacity: 0.6;
-}
-
-.historyItemsList {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.claimRow {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 12px 16px;
-  border-radius: 14px;
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  transition: all 0.15s ease;
-}
-
-.claimRow:hover {
-  background: rgba(255, 255, 255, 0.04);
-  border-color: rgba(168, 85, 247, 0.2);
-}
-
-.claimRowLeft {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  min-width: 0;
-}
-
-.claimCheckCircle {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background: rgba(16, 185, 129, 0.14);
-  color: var(--emerald-light, #34d399);
-  display: grid;
-  place-items: center;
-  flex-shrink: 0;
-}
-
-.claimMeta {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  min-width: 0;
-}
-
-.claimMeta strong {
-  font-size: 13.5px;
-  font-weight: 600;
-  color: #fff;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.claimMeta span {
-  font-size: 11.5px;
-  color: var(--text-muted, #64748b);
-}
-
-.claimRowRight {
-  flex-shrink: 0;
-}
-
-.claimBadge {
-  font-family: var(--font-display, 'Outfit', sans-serif);
-  font-size: 13px;
-  font-weight: 700;
-  padding: 4px 10px;
-  border-radius: 8px;
-  white-space: nowrap;
-}
-
-.claimBadgeViolet {
-  background: rgba(139, 92, 246, 0.14);
-  color: var(--violet-light, #c084fc);
-  border: 1px solid rgba(139, 92, 246, 0.25);
-}
-
-.claimBadgeGold {
-  background: rgba(245, 158, 11, 0.14);
-  color: var(--gold-light, #fbbf24);
-  border: 1px solid rgba(245, 158, 11, 0.25);
-}
-
-/* ==========================================================================
-   FOOTER
-   ========================================================================== */
-.footer {
-  border-top: 1px solid rgba(168, 85, 247, 0.14);
-  background: rgba(6, 5, 14, 0.96);
-  padding: 26px 0;
-  margin-top: auto;
-  position: relative;
-  z-index: 2;
-}
-
-.footerInner {
-  width: min(1280px, 100%);
-  margin: 0 auto;
-  padding: 0 clamp(12px, 3.5vw, 36px);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  flex-wrap: wrap;
-}
-
-.footerBrand {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.footerLogoWrap {
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
-  display: grid;
-  place-items: center;
-  background: rgba(139, 92, 246, 0.12);
-}
-
-.footerTrustImg {
-  width: 22px;
-  height: 22px;
-  object-fit: contain;
-}
-
-.footerBrand strong {
-  font-size: 13px;
-  color: #fff;
-  display: block;
-}
-
-.footerBrand p {
-  font-size: 11.5px;
-  color: var(--text-muted, #64748b);
-  margin: 0;
-}
-
-.footerSecurityBadge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
+  background: linear-gradient(135deg, #fde047 0%, #fbbf24 50%, #f59e0b 100%);
+  border: none;
+  color: #0c081b;
   font-size: 12px;
-  color: var(--text-secondary, #94a3b8);
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  cursor: pointer;
+  box-shadow: 0 0 16px rgba(245, 158, 11, 0.45);
+  transition: all 160ms ease;
 }
 
-/* Spin Utility */
-.spin {
-  animation: spinKey 0.8s linear infinite;
+.buttonClaimActive:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+  box-shadow: 0 0 22px rgba(245, 158, 11, 0.65);
 }
 
-@keyframes spinKey {
+.mobileClaimText {
+  display: none;
+}
+
+.spinIcon {
+  animation: spin 1s infinite linear;
+}
+
+@keyframes spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
 
+.buttonLocked {
+  width: 100%;
+  padding: 7px 8px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #64748b;
+  font-size: 11.5px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+
 /* ==========================================================================
-   RESPONSIVE DESIGN (320px+ Mobile First & Breakpoints)
+   BENEFITS SECTION
+   ========================================================================== */
+.benefitsSection {
+  background: linear-gradient(145deg, #0e0922 0%, #090518 100%);
+  border: 1px solid rgba(139, 92, 246, 0.2);
+  border-radius: 20px;
+  padding: 18px 24px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+}
+
+.benefitsSectionHeader {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.sparkleStarSmall {
+  color: #c084fc;
+  font-size: 12px;
+}
+
+.benefitsSectionTitle {
+  font-family: var(--font-display, 'Outfit', sans-serif);
+  font-size: 16px;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0;
+}
+
+.benefitsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.benefitItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  position: relative;
+}
+
+.benefitItem:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  right: -8px;
+  top: 10%;
+  height: 80%;
+  width: 1px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.benefitIconWrap {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+.benefitIconImg {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.benefitTextWrap {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.25;
+}
+
+.benefitTitle {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.benefitDesc {
+  font-size: 11.5px;
+  color: #94a3b8;
+  margin: 0;
+  margin-top: 2px;
+}
+
+/* ==========================================================================
+   OFFICIAL REWARDS BANNER (Bottom)
+   ========================================================================== */
+.officialRewardsBanner {
+  background: rgba(15, 10, 32, 0.85);
+  border: 1px solid rgba(245, 158, 11, 0.25);
+  border-radius: 16px;
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+.officialBannerLeft {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.vrShieldWrap {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+.officialBannerText {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.25;
+}
+
+.officialBannerLine1 {
+  font-size: 13px;
+  color: #f1f5f9;
+}
+
+.officialBannerLine2 {
+  font-size: 11.5px;
+  color: #94a3b8;
+}
+
+.officialBannerRight {
+  color: #94a3b8;
+  display: grid;
+  place-items: center;
+}
+
+/* ==========================================================================
+   RESPONSIVE MEDIA QUERIES
+   Tablet (768px - 1023px) and Mobile (< 768px)
    ========================================================================== */
 
-/* Large Tablets / Laptops (up to 1100px) */
-@media (max-width: 1100px) {
-  .heroGrid {
+/* Tablet Adjustments (768px - 1023px) */
+@media (max-width: 1023px) and (min-width: 768px) {
+  .desktopHeroGrid {
     grid-template-columns: 1fr;
+    gap: 16px;
   }
 
-  .rewardGrid {
+  .desktopHeroLeftCard {
+    padding: 20px 22px;
+  }
+
+  .desktopHeroRightCard {
+    padding: 20px 22px;
+  }
+
+  .heroStatsContainer {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+
+  /* Wrapped 4+3 reward card grid on tablet */
+  .rewardCardsGrid {
     grid-template-columns: repeat(4, 1fr);
-  }
-
-  .cardDaySeven {
-    grid-column: span 2;
-  }
-}
-
-/* Medium Tablets (up to 850px) */
-@media (max-width: 850px) {
-  .featuresSection {
-    grid-template-columns: 1fr;
-    gap: 12px;
-  }
-}
-
-/* Small Tablets / Large Phones (up to 768px) */
-@media (max-width: 768px) {
-  .navbar {
-    height: 62px;
-  }
-
-  .statsGrid {
-    grid-template-columns: 1fr;
-    gap: 8px;
-  }
-
-  .rewardGrid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .cardDaySeven {
-    grid-column: span 2;
-  }
-
-  .navBrandBadge {
-    display: none;
-  }
-
-  .streakPillLabel {
-    display: none;
-  }
-
-  .heroBannerArtwork {
-    max-height: 180px;
-    margin-bottom: 18px;
-  }
-
-  .heroArtworkImg {
-    max-height: 180px;
-  }
-}
-
-/* Mobile Phones (up to 480px) */
-@media (max-width: 480px) {
-  .navbar {
-    height: 58px;
-  }
-
-  .navbarContainer {
-    padding: 0 10px;
-    gap: 6px;
-  }
-
-  .backButton {
-    padding: 5px 8px 5px 6px;
-    gap: 5px;
-  }
-
-  .backIcon {
-    width: 16px;
-    height: 16px;
-  }
-
-  .navTitle {
-    font-size: 14px;
-  }
-
-  .navRightGroup {
-    gap: 6px;
-  }
-
-  .walletPill {
-    padding: 4px 8px;
-    gap: 5px;
-  }
-
-  .walletCoinIcon {
-    width: 18px;
-    height: 18px;
-  }
-
-  .walletPillText strong {
-    font-size: 12px;
-  }
-
-  .walletUnit {
-    font-size: 10px;
-  }
-
-  .streakPill {
-    padding: 4px 8px;
-    gap: 4px;
-  }
-
-  .streakFlameIcon {
-    width: 16px;
-    height: 16px;
-  }
-
-  .streakPillText strong {
-    font-size: 12px;
-  }
-
-  .avatarCircle {
-    width: 28px;
-    height: 28px;
-    font-size: 12px;
-  }
-
-  .mainContent {
-    padding: 16px 10px 48px;
-  }
-
-  .heroMainCard,
-  .ultimateCard,
-  .historyCardSection {
-    padding: 18px 14px;
-    border-radius: 18px;
-  }
-
-  .heroTitle {
-    font-size: 22px;
-  }
-
-  .heroSubtitle {
-    font-size: 13px;
-  }
-
-  .stepperContainer {
-    padding: 12px 14px;
-  }
-
-  .nodeCircle {
-    width: 24px;
-    height: 24px;
-    font-size: 10px;
-  }
-
-  .nodeDayText {
-    font-size: 9.5px;
-  }
-
-  .countdownBanner {
-    flex-direction: column;
-    align-items: flex-start;
     gap: 10px;
   }
 
-  .countdownBox {
+  .rewardCard:last-child {
+    grid-column: span 2;
+    max-width: 280px;
+    margin: 0 auto;
     width: 100%;
-    justify-content: center;
   }
 
-  .rewardGrid {
-    gap: 10px;
+  .benefitsGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
   }
 
-  .rewardCard {
-    padding: 12px 8px;
-    border-radius: 16px;
-  }
-
-  .rewardArtWrap {
-    width: 52px;
-    height: 52px;
-  }
-
-  .rewardArtImg {
-    width: 42px;
-    height: 42px;
-  }
-
-  .artDay7 {
-    width: 46px;
-    height: 46px;
-  }
-
-  .rewardAmountText {
-    font-size: 16px;
-  }
-
-  .claimRewardBtn {
-    padding: 8px 6px;
-    font-size: 11.5px;
-  }
-
-  .footerInner {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 14px;
+  .benefitItem:not(:last-child)::after {
+    display: none;
   }
 }
 
-/* Extra-Small Mobile Devices (approx 320px - 375px) */
-@media (max-width: 375px) {
-  .navbarContainer {
-    padding: 0 6px;
-    gap: 4px;
+/* Mobile Layout (< 768px) */
+@media (max-width: 767px) {
+  .page {
+    padding-bottom: 24px;
   }
 
-  .backButton {
-    padding: 4px 6px;
-    gap: 4px;
+  .topNavbar {
+    padding: 12px 16px;
   }
 
-  .navTitle {
-    font-size: 13px;
-  }
-
-  .walletPill {
-    padding: 4px 6px;
-    gap: 3px;
-  }
-
-  .walletUnit {
-    display: none; /* Preserves screen real estate on 320px screens */
-  }
-
-  .streakPill {
-    padding: 4px 6px;
-    gap: 3px;
-  }
-
-  .accountBtn {
-    padding: 2px;
-  }
-
-  .accountBtn .chevronIcon {
+  .navSubtitle {
     display: none;
   }
 
-  .avatarCircle {
-    width: 26px;
-    height: 26px;
-    font-size: 11px;
+  .desktopStreakBadge {
+    display: none;
   }
 
-  .heroTitle {
+  .navTitle {
     font-size: 20px;
   }
 
-  .rewardGrid {
-    grid-template-columns: 1fr 1fr;
+  .mainContainer {
+    padding: 0 16px;
+    gap: 16px;
+  }
+
+  /* Hide Desktop Hero Grid on Mobile */
+  .desktopHeroGrid {
+    display: none;
+  }
+
+  /* Show Mobile Hero Banner, Action Row, Stat Cards, and Ultimate Panel */
+  .mobileHeroBannerWrap {
+    display: flex;
+  }
+
+  .mobileStatsGrid {
+    display: grid;
+  }
+
+  .mobileUltimatePanel {
+    display: flex;
+  }
+
+  /* Reward Cards: 2-Column Grid on Mobile */
+  .rewardCardsGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  /* Day 7 VIP spans 2 columns or centers */
+  .rewardCard:last-child {
+    grid-column: span 2;
+    max-width: 320px;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  .desktopClaimText {
+    display: none;
+  }
+
+  .mobileClaimText {
+    display: inline;
+  }
+
+  /* Benefits Section on Mobile */
+  .benefitsSection {
+    padding: 16px;
+  }
+
+  .benefitsSectionHeader {
+    display: flex;
+  }
+
+  .benefitsGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px 10px;
+  }
+
+  .benefitItem:not(:last-child)::after {
+    display: none;
+  }
+
+  .benefitItem {
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .benefitIconWrap {
+    width: 32px;
+    height: 32px;
+  }
+
+  .benefitTitle {
+    font-size: 12.5px;
+  }
+
+  .benefitDesc {
+    font-size: 10.5px;
+  }
+}
+
+/* Very Small Mobile Viewports (<= 360px) */
+@media (max-width: 360px) {
+  .mobileStatsGrid {
+    gap: 6px;
+  }
+
+  .mobileStatCard {
+    padding: 8px 4px;
+  }
+
+  .mobileStatVal {
+    font-size: 13px;
+  }
+
+  .rewardCardsGrid {
     gap: 8px;
   }
 
   .rewardCard {
-    padding: 10px 6px;
+    padding: 10px 8px;
   }
 
-  .rewardAmountText {
-    font-size: 15px;
+  .cardArtworkWrap {
+    width: 54px;
+    height: 54px;
   }
 
-  .claimRewardBtn {
-    padding: 7px 4px;
-    font-size: 11px;
-    gap: 3px;
+  .cardRewardAmount {
+    font-size: 17px;
+  }
+}
+
+/* Accessibility / Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  .pulseIcon,
+  .ultimateCrownShowcaseWrap,
+  .sparkleStar,
+  .progressSlide {
+    animation: none !important;
+  }
+
+  .rewardCard,
+  .buttonClaimActive,
+  .heroStatCard {
+    transition: none !important;
   }
 }
