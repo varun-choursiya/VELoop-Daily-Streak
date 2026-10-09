@@ -1163,6 +1163,65 @@
 }
 
 /* ==========================================================================
+   COUNTDOWN BANNER
+   ========================================================================== */
+.countdownBanner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 20px;
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.12) 0%, rgba(245, 158, 11, 0.08) 100%);
+  border: 1px solid rgba(168, 85, 247, 0.3);
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25), 0 0 20px rgba(139, 92, 246, 0.1);
+  margin-bottom: 16px;
+}
+
+.countdownInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.countdownLabel {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: #c084fc;
+}
+
+.countdownDay {
+  font-size: 15px;
+  font-weight: 800;
+  color: #ffffff;
+}
+
+.countdownBox {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: rgba(12, 8, 28, 0.7);
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  border-radius: 12px;
+  box-shadow: 0 0 16px rgba(245, 158, 11, 0.15);
+}
+
+.countdownClockIcon {
+  color: #fbbf24;
+}
+
+.countdownValue {
+  font-family: var(--font-display, 'Outfit', sans-serif);
+  font-size: 16px;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: 0.05em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ==========================================================================
    7 DAILY REWARD CARDS SECTION
    ========================================================================== */
 .rewardCardsContainer {
@@ -1204,6 +1263,12 @@
   background: linear-gradient(170deg, #17112e 0%, #0f0a1f 100%);
 }
 
+.cardNextWaiting {
+  border: 1.5px solid rgba(245, 158, 11, 0.45) !important;
+  box-shadow: 0 0 16px rgba(245, 158, 11, 0.15) !important;
+  background: linear-gradient(170deg, #16102c 0%, #0d081c 100%);
+}
+
 .cardDay7Vip {
   border: 1.5px solid rgba(245, 158, 11, 0.65) !important;
   box-shadow: 0 0 22px rgba(245, 158, 11, 0.18) !important;
@@ -1237,6 +1302,20 @@
   padding: 2px 8px;
 }
 
+.badgeClaimed {
+  font-size: 10px;
+  font-weight: 800;
+  color: #10b981;
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.35);
+  border-radius: 6px;
+  padding: 2px 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  line-height: 1.2;
+}
+
 .badgeClaimedCheck {
   width: 18px;
   height: 18px;
@@ -1255,6 +1334,40 @@
   border-radius: 6px;
   padding: 2px 6px;
   letter-spacing: 0.02em;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  line-height: 1.2;
+  box-shadow: 0 0 10px rgba(251, 191, 36, 0.4);
+}
+
+.badgeNext {
+  font-size: 10px;
+  font-weight: 800;
+  color: #fbbf24;
+  background: rgba(245, 158, 11, 0.16);
+  border: 1px solid rgba(245, 158, 11, 0.45);
+  border-radius: 6px;
+  padding: 2px 6px;
+  letter-spacing: 0.02em;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  line-height: 1.2;
+}
+
+.badgeLocked {
+  font-size: 10px;
+  font-weight: 700;
+  color: #94a3b8;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  padding: 2px 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  line-height: 1.2;
 }
 
 .badgeTodayPending {
@@ -1677,6 +1790,18 @@
 
   .mobileUltimatePanel {
     display: flex;
+  }
+
+  .countdownBanner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px 16px;
+  }
+
+  .countdownBox {
+    width: 100%;
+    justify-content: center;
   }
 
   /* Reward Cards: 2-Column Grid on Mobile */

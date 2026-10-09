@@ -137,8 +137,12 @@ function StarCoin({ className = "", size = 28 }) {
   );
 }
 
-function Countdown({ nextClaimAt, serverTime, onDone }) {
-  const [remaining, setRemaining] = useState(0);
+function Countdown({ nextClaimAt, serverTime, onDone, className = "" }) {
+  const [remaining, setRemaining] = useState(() => {
+    if (!nextClaimAt || !serverTime) return 0;
+    const serverOffset = new Date(serverTime).getTime() - Date.now();
+    return Math.max(0, new Date(nextClaimAt).getTime() - (Date.now() + serverOffset));
+  });
 
   useEffect(() => {
     if (!nextClaimAt || !serverTime) {
@@ -170,7 +174,7 @@ function Countdown({ nextClaimAt, serverTime, onDone }) {
   const seconds = String(totalSeconds % 60).padStart(2, "0");
 
   return (
-    <span>
+    <span className={className}>
       {hours}:{minutes}:{seconds}
     </span>
   );
@@ -309,6 +313,8 @@ export default function DailyStreakPage() {
   const totalRewardsCount = streak?.totalRewards ?? 7;
   const currentStreakDays = streak?.currentStreak ?? 1;
   const vesBalance = wallet?.vesBalance ?? 120;
+  const completed = streak?.status === "COMPLETED";
+  const hasClaimableToday = Boolean(rewards?.some((r) => r.status === "AVAILABLE"));
 
   // Next reward formatting
   const formattedNextReward = nextReward
@@ -728,6 +734,25 @@ export default function DailyStreakPage() {
           <span className={styles.sparkleStar}>✦</span>
         </div>
 
+        {/* Countdown Banner if awaiting next claim window */}
+        {!completed && streak?.nextClaimAt && !hasClaimableToday && (
+          <div className={styles.countdownBanner}>
+            <div className={styles.countdownInfo}>
+              <span className={styles.countdownLabel}>NEXT REWARD WINDOW</span>
+              <strong className={styles.countdownDay}>Day {streak.currentDay} Check-In</strong>
+            </div>
+            <div className={styles.countdownBox}>
+              <Clock3 size={15} className={styles.countdownClockIcon} />
+              <Countdown
+                nextClaimAt={streak.nextClaimAt}
+                serverTime={data.serverTime}
+                onDone={handleTimerDone}
+                className={styles.countdownValue}
+              />
+            </div>
+          </div>
+        )}
+
         {/* ====================================================================
             7 DAILY REWARD CARDS SECTION
             Desktop: Single horizontal row of 7 compact cards
@@ -737,11 +762,10 @@ export default function DailyStreakPage() {
           <div className={styles.rewardCardsGrid}>
             {rewards.map((r) => {
               const isClaimed = r.status === "CLAIMED";
-              const isAvailable = r.status === "AVAILABLE";
-              const isToday = r.day === streak.currentDay;
+              const isClaimableToday = !isClaimed && r.status === "AVAILABLE";
+              const isNextWaiting = !isClaimed && !isClaimableToday && r.day === streak.currentDay;
+              const isLocked = !isClaimed && !isClaimableToday && !isNextWaiting;
               const isDay7 = r.day === 7;
-              const isTodayActive = isAvailable || (isToday && !isClaimed);
-              const isLocked = !isClaimed && !isAvailable && !isToday;
 
               // Card Asset selector
               const getCardAsset = () => {
@@ -760,7 +784,8 @@ export default function DailyStreakPage() {
                   key={r.day}
                   className={`
                     ${styles.rewardCard}
-                    ${isTodayActive && !isDay7 ? styles.cardTodayActive : ""}
+                    ${isClaimableToday && !isDay7 ? styles.cardTodayActive : ""}
+                    ${isNextWaiting ? styles.cardNextWaiting : ""}
                     ${isClaimed ? styles.cardClaimed : ""}
                     ${isLocked ? styles.cardLocked : ""}
                     ${isDay7 ? styles.cardDay7Vip : ""}
@@ -772,25 +797,29 @@ export default function DailyStreakPage() {
 
                     {/* Right side status badge */}
                     {isClaimed && (
-                      <span className={styles.badgeClaimedCheck} title="Claimed">
-                        <Check size={11} strokeWidth={3.5} />
+                      <span className={styles.badgeClaimed} title="Claimed">
+                        <Check size={10} strokeWidth={3} />
+                        <span>Claimed</span>
                       </span>
                     )}
 
-                    {!isClaimed && isToday && !isDay7 && (
-                      <span className={styles.badgeToday}>Today</span>
+                    {isClaimableToday && (
+                      <span className={styles.badgeToday} title="Claimable Today">
+                        <span>Today</span>
+                      </span>
                     )}
 
-                    {!isClaimed && isDay7 && (
-                      <span className={styles.badgeVip}>VIP</span>
+                    {isNextWaiting && (
+                      <span className={styles.badgeNext} title="Upcoming reward">
+                        <span>Next</span>
+                      </span>
                     )}
 
-                    {!isClaimed && !isToday && !isDay7 && r.day === 5 && (
-                      <span className={styles.badgePurple}>Gift Card</span>
-                    )}
-
-                    {!isClaimed && !isToday && !isDay7 && r.day === 6 && (
-                      <span className={styles.badgePurple}>Coin</span>
+                    {isLocked && (
+                      <span className={styles.badgeLocked} title="Locked">
+                        <Lock size={9} />
+                        <span>Locked</span>
+                      </span>
                     )}
                   </div>
 
@@ -818,7 +847,7 @@ export default function DailyStreakPage() {
                       className={`
                         ${styles.cardRewardAmount}
                         ${isClaimed ? styles.textGreen : ""}
-                        ${isAvailable || isDay7 ? styles.textGold : styles.textPurple}
+                        ${isClaimableToday || isDay7 ? styles.textGold : styles.textPurple}
                       `}
                     >
                       {amountValue}
@@ -838,7 +867,7 @@ export default function DailyStreakPage() {
                       </div>
                     )}
 
-                    {!isClaimed && isAvailable && (
+                    {isClaimableToday && (
                       <button
                         type="button"
                         className={styles.buttonClaimActive}
@@ -861,12 +890,12 @@ export default function DailyStreakPage() {
                       </button>
                     )}
 
-                    {!isClaimed && !isAvailable && isToday && (
+                    {isNextWaiting && (
                       <div className={styles.buttonCountdown} title="Next claim window countdown">
                         <Clock3 size={12} />
-                        {streak?.nextClaimAt ? (
+                        {(r.nextClaimAt || streak?.nextClaimAt) ? (
                           <Countdown
-                            nextClaimAt={streak.nextClaimAt}
+                            nextClaimAt={r.nextClaimAt || streak.nextClaimAt}
                             serverTime={data.serverTime}
                             onDone={handleTimerDone}
                           />
@@ -876,7 +905,7 @@ export default function DailyStreakPage() {
                       </div>
                     )}
 
-                    {!isClaimed && !isAvailable && !isToday && (
+                    {isLocked && (
                       <div className={styles.buttonLocked}>
                         <Lock size={12} />
                         <span>Locked</span>
@@ -951,7 +980,8 @@ export default function DailyStreakPage() {
         {/* ====================================================================
             BOTTOM INFORMATIONAL & OFFICIAL REWARDS BANNER
             ==================================================================== */}
-        <div className={styles.officialRewardsBanner}>
+        <div onClick={() => window.open('https://www.velooprewards.in/', '_blank')}
+          className={styles.officialRewardsBanner}>
           <div className={styles.officialBannerLeft}>
             <div className={styles.vrShieldWrap}>
               <VrShield size={26} />
